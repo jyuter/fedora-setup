@@ -4,6 +4,9 @@ echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
 echo "defaultyes=True" >> /etc/dnf/dnf.conf
 echo "keepchache=True" >> /etc/dnf/dnf.conf
 
+# Run Initial Update
+dnf update
+
 # Enable RPM Fusion
 dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
 dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
@@ -85,8 +88,3 @@ flatpak install flathub io.github.giantpinkrobots.flatsweep -y
 flatpak install flathub org.videolan.VLC -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
-
-
-# Final upgrade and cleanup
-dnf upgrade --refresh
-dnf autoremove
