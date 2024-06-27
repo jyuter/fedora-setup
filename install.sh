@@ -8,14 +8,14 @@ echo "keepchache=True" >> /etc/dnf/dnf.conf
 dnf upgrade --refresh -y
 dnf groupupdate core -y
 
+# Enable RPM Fusion
+dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
+dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+
 # Firmware Updates
 fwupdmgr refresh --force
 fwupdmgr get-updates
 fwupdmgr update
-
-# Enable RPM Fusion
-dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 
 # Enable Flathub
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
