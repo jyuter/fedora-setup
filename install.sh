@@ -23,9 +23,6 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 # Install Git
 dnf install git -y
-git config --global user.name "Josh Yuter"
-git config --global user.email "jyuter@gmail.com"
-
 
 # Install Shell Commands
 dnf install zsh -y
