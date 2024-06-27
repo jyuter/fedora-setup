@@ -7,6 +7,9 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 # Install Shell Commands
 dnf install zsh -y
+sudo -u jyuter chsh -s $(which zsh)
+sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+
 dnf install util-linux -y
 dnf install alacritty -y
 dnf install htop -y
@@ -15,6 +18,7 @@ dnf install neovim -y
 dnf install fzf -y
 dnf install ripgrep -y
 dnf install bat -y
+dnf install exa -y
 
 # Install Programming Languages
 dnf install dotnet-sdk-8.0 -y
