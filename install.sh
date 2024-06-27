@@ -5,7 +5,14 @@ echo "defaultyes=True" >> /etc/dnf/dnf.conf
 echo "keepchache=True" >> /etc/dnf/dnf.conf
 
 # Run Initial Update
-dnf upgrade -y
+dnf upgrade --refresh -y
+dnf groupupdate core -y
+dnf install dnf5 dnf5-plugins -y
+
+# Firmware Updates
+fwupdmgr refresh --force
+fwupdmgr get-updates
+fwupdmgr update
 
 # Enable RPM Fusion
 dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
