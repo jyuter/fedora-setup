@@ -7,7 +7,6 @@ echo "keepchache=True" >> /etc/dnf/dnf.conf
 # Run Initial Update
 dnf upgrade --refresh -y
 dnf groupupdate core -y
-dnf install dnf5 dnf5-plugins -y
 
 # Firmware Updates
 fwupdmgr refresh --force
@@ -26,9 +25,6 @@ dnf install git -y
 
 # Install Shell Commands
 dnf install zsh -y
-#sudo -u jyuter chsh -s $(which zsh)
-sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
-
 dnf install util-linux -y
 dnf install alacritty -y
 dnf install htop -y
