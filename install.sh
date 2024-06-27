@@ -5,7 +5,7 @@ echo "defaultyes=True" >> /etc/dnf/dnf.conf
 echo "keepchache=True" >> /etc/dnf/dnf.conf
 
 # Run Initial Update
-dnf update
+dnf upgrade -y
 
 # Enable RPM Fusion
 dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
@@ -74,6 +74,9 @@ dnf install google-chrome-stable -y
 
 # Install Media
 dnf install vlc -y
+dnf swap ffmpeg-free ffmpeg --allowerasing -y
+dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
+dnf update @sound-and-video -y
 
 # Install Flatpacks
 flatpak install flathub com.todoist.Todoist -y
