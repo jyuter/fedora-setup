@@ -63,22 +63,19 @@ dnf install google-chrome-stable -y
 dnf install vlc -y
 
 # Install Flatpacks
-flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub com.todoist.Todoist -y
 flatpak install flathub com.brave.Browser -y
 flatpak install flathub org.telegram.desktop -y
 flatpak install flathub com.spotify.Client -y
-flatpak install flathub com.bitwarden.desktop -y
 flatpak install flathub us.zoom.Zoom -y
 flatpak install flathub com.github.PintaProject.Pinta -y
-flatpak install flathub org.signal.Signal -y
 flatpak install flathub io.github.mimbrero.WhatsAppDesktop -y
-flatpak install flathub org.audacityteam.Audacity -y
 flatpak install flathub com.getpostman.Postman -y
 flatpak install flathub io.github.giantpinkrobots.flatsweep -y
 flatpak install flathub org.videolan.VLC -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
+
 
 # Final upgrade and cleanup
 dnf -y upgrade --refresh
