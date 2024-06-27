@@ -21,6 +21,12 @@ dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-rel
 # Enable Flathub
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+# Install Git
+dnf install git -y
+git config --global user.name "Josh Yuter"
+git config --global user.email "jyuter@gmail.com"
+
+
 # Install Shell Commands
 dnf install zsh -y
 #sudo -u jyuter chsh -s $(which zsh)
@@ -37,10 +43,6 @@ dnf install bat -y
 dnf install exa -y
 
 # Install Programming Tools
-dnf install git -y
-git config --global user.name "Josh Yuter"
-git config --global user.email "jyuter@gmail.com"
-
 dnf install dotnet-sdk-8.0 -y
 dnf install gcc -y
 dnf install elixir -y
