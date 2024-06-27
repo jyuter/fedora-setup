@@ -59,23 +59,23 @@ dnf install fedora-workstation-repositories -y
 dnf config-manager --set-enabled google-chrome 
 dnf install google-chrome-stable -y
 
-# Download Flatpacks
-flatpak install flathub org.zotero.Zotero
-flatpak install flathub com.todoist.Todoist
-flatpak install flathub com.brave.Browser
-flatpak install flathub org.telegram.desktop
-flatpak install flathub com.spotify.Client
-flatpak install flathub com.bitwarden.desktop
-flatpak install flathub us.zoom.Zoom
-flatpak install flathub com.github.PintaProject.Pinta
-flatpak install flathub org.signal.Signal
-flatpak install flathub io.github.mimbrero.WhatsAppDesktop
-flatpak install flathub org.audacityteam.Audacity
-flatpak install flathub com.getpostman.Postman
-flatpak install flathub io.github.giantpinkrobots.flatsweep
-flatpak install flathub org.videolan.VLC
-flatpak install flathub md.obsidian.Obsidian
-flatpak install flathub io.podman_desktop.PodmanDesktop
+# Install Flatpacks
+flatpak install flathub org.zotero.Zotero -y
+flatpak install flathub com.todoist.Todoist -y
+flatpak install flathub com.brave.Browser -y
+flatpak install flathub org.telegram.desktop -y
+flatpak install flathub com.spotify.Client -y
+flatpak install flathub com.bitwarden.desktop -y
+flatpak install flathub us.zoom.Zoom -y
+flatpak install flathub com.github.PintaProject.Pinta -y
+flatpak install flathub org.signal.Signal -y
+flatpak install flathub io.github.mimbrero.WhatsAppDesktop -y
+flatpak install flathub org.audacityteam.Audacity -y
+flatpak install flathub com.getpostman.Postman -y
+flatpak install flathub io.github.giantpinkrobots.flatsweep -y
+flatpak install flathub org.videolan.VLC -y
+flatpak install flathub md.obsidian.Obsidian -y
+flatpak install flathub io.podman_desktop.PodmanDesktop -y
 
 # Final upgrade and cleanup
 dnf -y upgrade --refresh
