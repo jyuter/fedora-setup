@@ -59,6 +59,9 @@ dnf install fedora-workstation-repositories -y
 dnf config-manager --set-enabled google-chrome 
 dnf install google-chrome-stable -y
 
+# Install Media
+dnf install vlc -y
+
 # Install Flatpacks
 flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub com.todoist.Todoist -y
