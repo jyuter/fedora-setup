@@ -94,6 +94,8 @@ flatpak install flathub com.github.PintaProject.Pinta -y
 flatpak install flathub io.github.mimbrero.WhatsAppDesktop -y
 flatpak install flathub com.getpostman.Postman -y
 flatpak install flathub io.github.giantpinkrobots.flatsweep -y
+flatpak install flathub org.onlyoffice.desktopeditors -y
+flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
 flatpak install flathub org.telegram.desktop -y
