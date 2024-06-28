@@ -15,7 +15,7 @@ dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-rel
 # Firmware Updates
 fwupdmgr refresh --force
 fwupdmgr get-updates
-fwupdmgr update
+fwupdmgr update -y
 
 # Enable Flathub
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
