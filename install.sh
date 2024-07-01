@@ -43,6 +43,9 @@ dnf groupinstall "Development Tools" -y
 dnf install winetricks -y
 dnf install timeshift -y
 dnf install dnfdragora -y
+dnf copr enable dawid/better_fonts -y
+dnf install fontconfig-font-replacements -y
+dnf install fontconfig-enhanced-defaults -y
 
 # Install Programming Tools
 dnf install dotnet-sdk-8.0 -y
@@ -57,9 +60,9 @@ dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
 dnf install rustup -y
 
 dnf install golang -y
-mkdir -p $HOME/go
-echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
-source $HOME/.bashrc
+sudo -n -i -u jyuter mkdir -p $HOME/go
+sudo -n -i -u jyuter echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
+sudo -n -i -u jyuter source $HOME/.bashrc
 
 dnf install nodejs -y
 npm install -g npm@latest
