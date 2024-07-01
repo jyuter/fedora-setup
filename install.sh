@@ -115,5 +115,9 @@ flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
 flatpak install flathub org.telegram.desktop -y
-flatpak install flathub com.jetbrains.PyCharm-Community -y
 flatpak install flathub org.bleachbit.BleachBit -y
+
+#Snap store 
+dnf install snapd -y
+snap install snap-store -y
+snap install acrordrdc -y
