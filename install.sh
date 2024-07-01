@@ -35,6 +35,9 @@ dnf install ripgrep -y
 dnf install bat -y
 dnf install exa -y
 
+# Install Utilities
+dnf install winetricks -y
+
 # Install Programming Tools
 dnf install dotnet-sdk-8.0 -y
 dnf install gcc -y
