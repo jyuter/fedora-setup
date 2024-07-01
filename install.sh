@@ -36,6 +36,10 @@ dnf install bat -y
 dnf install exa -y
 
 # Install Utilities
+dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
+dnf install winehq-stable -y
+dnf groupinstall "C Development Tools and Libraries" -y
+dnf groupinstall "Development Tools" -y
 dnf install winetricks -y
 
 # Install Programming Tools
