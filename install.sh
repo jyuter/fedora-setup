@@ -41,6 +41,8 @@ dnf install wine -y
 dnf groupinstall "C Development Tools and Libraries" -y
 dnf groupinstall "Development Tools" -y
 dnf install winetricks -y
+dnf install timeshift -y
+dnf install dnfdragora -y
 
 # Install Programming Tools
 dnf install dotnet-sdk-8.0 -y
