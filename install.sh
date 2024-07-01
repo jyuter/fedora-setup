@@ -76,6 +76,10 @@ dnf install dnf-plugins-core -y
 dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo 
 dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
+wget -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/149282/docker-desktop-4.30.0-x86_64.rpm"
+dnf install ./docker-desktop.rpm -y
+rm ./docker-desktop.rpm 
+
 systemctl start docker
 systemctl enable docker
 
@@ -111,3 +115,5 @@ flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
 flatpak install flathub org.telegram.desktop -y
+flatpak install flathub com.jetbrains.PyCharm-Community -y
+flatpak install flathub org.bleachbit.BleachBit -y
