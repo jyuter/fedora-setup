@@ -114,8 +114,8 @@ flatpak install flathub org.onlyoffice.desktopeditors -y
 flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
-flatpak install flathub org.telegram.desktop -y
 flatpak install flathub org.bleachbit.BleachBit -y
+flatpak install flathub org.signal.Signal -y
 
 #Snap store 
 dnf install snapd -y
