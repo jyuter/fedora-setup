@@ -119,5 +119,5 @@ flatpak install flathub org.bleachbit.BleachBit -y
 
 #Snap store 
 dnf install snapd -y
-snap install snap-store -y
-snap install acrordrdc -y
+snap install snap-store
+snap install acrordrdc
