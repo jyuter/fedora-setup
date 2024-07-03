@@ -56,6 +56,7 @@ dnf install dnfdragora -y
 dnf copr enable dawid/better_fonts -y
 dnf install fontconfig-font-replacements -y
 dnf install fontconfig-enhanced-defaults -y
+dnf install latte-dock -y
 
 # Install Programming Tools
 echo "Install development tools..."
@@ -132,6 +133,7 @@ flatpak install flathub md.obsidian.Obsidian -y
 flatpak install flathub io.podman_desktop.PodmanDesktop -y
 flatpak install flathub org.bleachbit.BleachBit -y
 flatpak install flathub org.signal.Signal -y
+flatpak install flathub com.obsproject.Studio -y
 
 #Snap store 
 echo "Installing Snaps..."
