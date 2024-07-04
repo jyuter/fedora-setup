@@ -17,9 +17,9 @@ dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-rel
 
 # Firmware Updates
 echo "Updating firmware..."
-fwupdmgr refresh --force
-fwupdmgr get-updates
-fwupdmgr update -y
+# fwupdmgr refresh --force
+# fwupdmgr get-updates
+# fwupdmgr update -y
 
 # Enable Flathub
 echo "Enabling Flathub..."
@@ -49,10 +49,6 @@ echo "Installing utilities..."
 dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
 dnf install timeshift -y
 dnf install dnfdragora -y
-dnf copr enable dawid/better_fonts -y
-dnf install fontconfig-font-replacements -y
-dnf install fontconfig-enhanced-defaults -y
-dnf install latte-dock -y
 
 # Install Programming Tools
 echo "Install development tools..."
