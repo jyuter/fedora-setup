@@ -66,6 +66,16 @@ dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq
 dnf install timeshift -y
 dnf install dnfdragora -y
 
+dnf group install --with-optional virtualization
+systemctl start libvirtd
+systemctl enable libvirtd
+dnf install freerdp -y
+
+dnf swap ffmpeg-free ffmpeg --allowerasing 
+dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
+dnf update @sound-and-video
+dnf install intel-media-driver
+
 # Install Programming Tools
 echo "Install development tools..."
 dnf install dotnet-sdk-8.0 -y
