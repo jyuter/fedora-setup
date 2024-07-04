@@ -76,9 +76,6 @@ dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-g
 dnf update @sound-and-video
 dnf install intel-media-driver -y
 
-dnf copr enable alciregi/distrobox
-dnf install distrobox -y
-
 # Install Programming Tools
 echo "Install development tools..."
 dnf install dotnet-sdk-8.0 -y
