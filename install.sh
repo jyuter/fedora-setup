@@ -67,7 +67,7 @@ dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq
 dnf install timeshift -y
 dnf install dnfdragora -y
 
-dnf group install --with-optional virtualization
+dnf group install --with-optional virtualization -y
 systemctl start libvirtd
 systemctl enable libvirtd
 dnf install freerdp -y
@@ -135,6 +135,7 @@ dnf install google-chrome-stable -y
 echo "Installing media..."
 dnf install vlc -y
 dnf group install Multimedia -y
+dnf install mpv -y
 
 # Install Themes
 dnf install Lightly -y
