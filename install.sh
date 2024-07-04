@@ -50,6 +50,9 @@ dnf install lsd -y
 dnf install bpytop -y
 dnf install speedtest-cli -y
 dnf install lolcat -y
+dnf install neovim -y
+dnf install tmux -y
+dnf install timetrap -y
 
 # Install Utilities
 echo "Installing utilities..."
