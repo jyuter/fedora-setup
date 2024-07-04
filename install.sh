@@ -106,18 +106,3 @@ echo "Installing media..."
 dnf install vlc -y
 dnf group install Multimedia -y
 
-# Install Flatpacks
-echo "Installing Flatpacks..."
-flatpak install flathub com.todoist.Todoist -y
-flatpak install flathub com.brave.Browser -y
-flatpak install flathub org.telegram.desktop -y
-flatpak install flathub com.spotify.Client -y
-flatpak install flathub us.zoom.Zoom -y
-flatpak install flathub com.github.PintaProject.Pinta -y
-flatpak install flathub io.github.mimbrero.WhatsAppDesktop -y
-flatpak install flathub com.getpostman.Postman -y
-flatpak install flathub io.github.giantpinkrobots.flatsweep -y
-flatpak install flathub org.zotero.Zotero -y
-flatpak install flathub md.obsidian.Obsidian -y
-flatpak install flathub io.podman_desktop.PodmanDesktop -y
-flatpak install flathub org.signal.Signal -y
