@@ -74,7 +74,7 @@ dnf install freerdp -y
 dnf swap ffmpeg-free ffmpeg --allowerasing 
 dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
 dnf update @sound-and-video
-dnf install intel-media-driver
+dnf install intel-media-driver -y
 
 dnf copr enable alciregi/distrobox
 dnf install distrobox -y
