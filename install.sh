@@ -53,6 +53,12 @@ dnf install lolcat -y
 dnf install neovim -y
 dnf install tmux -y
 dnf install timetrap -y
+dnf copr enable atim/starship -y
+dnf install starship -y
+dnf install ripgrep -y
+dnf install zoxide -y
+dnf install entr -y
+dnf install mc -y
 
 # Install Utilities
 echo "Installing utilities..."
