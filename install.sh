@@ -43,6 +43,13 @@ dnf install fzf -y
 dnf install ripgrep -y
 dnf install bat -y
 dnf install exa -y
+dnf install ffmpeg -y 
+dnf install cpufetch -y
+dnf install gdu -y
+dnf install lsd -y
+dnf install bpytop -y
+dnf install speedtest-cli -y
+dnf install lolcat -y
 
 # Install Utilities
 echo "Installing utilities..."
