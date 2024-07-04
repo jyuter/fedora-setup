@@ -17,9 +17,9 @@ dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-rel
 
 # Firmware Updates
 echo "Updating firmware..."
-# fwupdmgr refresh --force
-# fwupdmgr get-updates
-# fwupdmgr update -y
+fwupdmgr refresh --force
+fwupdmgr get-updates
+fwupdmgr update -y
 
 # Enable Flathub
 echo "Enabling Flathub..."
@@ -106,3 +106,5 @@ echo "Installing media..."
 dnf install vlc -y
 dnf group install Multimedia -y
 
+# Install Themes
+dnf install Lightly -y
