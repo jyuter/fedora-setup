@@ -104,9 +104,7 @@ dnf install google-chrome-stable -y
 # Install Media
 echo "Installing media..."
 dnf install vlc -y
-dnf swap ffmpeg-free ffmpeg --allowerasing -y
-dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
-dnf update @sound-and-video -y
+dnf group install Multimedia -y
 
 # Install Flatpacks
 echo "Installing Flatpacks..."
