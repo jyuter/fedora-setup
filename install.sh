@@ -47,10 +47,6 @@ dnf install exa -y
 # Install Utilities
 echo "Installing utilities..."
 dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
-dnf install wine -y
-dnf groupinstall "C Development Tools and Libraries" -y
-dnf groupinstall "Development Tools" -y
-dnf install winetricks -y
 dnf install timeshift -y
 dnf install dnfdragora -y
 dnf copr enable dawid/better_fonts -y
@@ -134,9 +130,3 @@ flatpak install flathub io.podman_desktop.PodmanDesktop -y
 flatpak install flathub org.bleachbit.BleachBit -y
 flatpak install flathub org.signal.Signal -y
 flatpak install flathub com.obsproject.Studio -y
-
-#Snap store 
-echo "Installing Snaps..."
-dnf install snapd -y
-snap install snap-store
-snap install acrordrdc
