@@ -59,6 +59,7 @@ dnf install ripgrep -y
 dnf install zoxide -y
 dnf install entr -y
 dnf install mc -y
+dnf install yazi -y
 
 # Install Utilities
 echo "Installing utilities..."
