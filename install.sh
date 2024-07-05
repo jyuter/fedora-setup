@@ -132,3 +132,21 @@ echo "Installing media..."
 dnf install vlc -y
 dnf group install Multimedia -y
 dnf install mpv -y
+
+# Install Flatpacks
+flatpak install flathub md.obsidian.Obsidian -y
+flatpak install flathub com.todoist.Todoist -y
+flatpak install flathub org.telegram.desktop -y
+flatpak install flathub io.github.mimbrero.WhatsAppDesktop =y
+flatpak install flathub org.signal.Signal -y
+flatpak install flathub org.audacityteam.Audacity -y
+flatpak install flathub com.obsproject.Studio -y
+flatpak install flathub com.jetbrains.PyCharm-Community -y
+flatpak install flathub org.gnome.Loupe -y
+flatpak install flathub com.github.PintaProject.Pinta -y
+flatpak install flathub org.zotero.Zotero -y
+flatpak install flathub com.spotify.Client -y
+flatpak install flathub com.google.AndroidStudio -y
+flatpak install flathub com.bitwarden.desktop -y
+flatpak install flathub io.github.giantpinkrobots.flatsweep -y
+flatpak install flathub com.github.dail8859.NotepadNext -y
