@@ -21,6 +21,10 @@ dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-rel
 # fwupdmgr get-updates
 # fwupdmgr update -y
 
+dnf install kernel-devel -y
+dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo -y
+dnf install openrazer-meta -y
+
 # Enable Flathub
 echo "Enabling Flathub..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -150,3 +154,4 @@ flatpak install flathub com.google.AndroidStudio -y
 flatpak install flathub com.bitwarden.desktop -y
 flatpak install flathub io.github.giantpinkrobots.flatsweep -y
 flatpak install flathub com.github.dail8859.NotepadNext -y
+flatpak install flathub xyz.z3ntu.razergenie -y
