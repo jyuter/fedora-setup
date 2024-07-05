@@ -71,9 +71,9 @@ systemctl start libvirtd
 systemctl enable libvirtd
 dnf install freerdp -y
 
-dnf swap ffmpeg-free ffmpeg --allowerasing 
+dnf swap ffmpeg-free ffmpeg --allowerasing -y
 dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
-dnf update @sound-and-video
+dnf update @sound-and-video -y
 dnf install intel-media-driver -y
 
 # Install Programming Tools
