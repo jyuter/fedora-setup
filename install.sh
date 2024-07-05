@@ -132,6 +132,3 @@ echo "Installing media..."
 dnf install vlc -y
 dnf group install Multimedia -y
 dnf install mpv -y
-
-# Install Themes
-dnf install Lightly -y
