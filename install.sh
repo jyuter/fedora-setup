@@ -9,6 +9,7 @@ echo "keepchache=True" >> /etc/dnf/dnf.conf
 echo "Running initial updates..."
 dnf upgrade --refresh -y
 dnf groupupdate core -y
+dnf install dnf-automatic -y
 
 # Enable RPM Fusion
 echo "Enabling RPM Fusion..."
