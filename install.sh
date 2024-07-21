@@ -65,7 +65,6 @@ dnf install ripgrep -y
 dnf install zoxide -y
 dnf install entr -y
 dnf install mc -y
-dnf install timeshift -y
 
 
 # Install Utilities
