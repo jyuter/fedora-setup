@@ -98,6 +98,9 @@ wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/do
 && rm JetBrainsMono.zip \
 && fc-cache -fv
 
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+
 # Install Utilities
 echo "Installing utilities..."
 dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
