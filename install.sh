@@ -35,6 +35,7 @@ echo "Installing git..."
 dnf install git -y
 sudo -n -i -u jyuter git config --global user.name "Josh Yuter"
 sudo -n -i -u jyuter git config --global user.email "jyuter@gmail.com"
+dnf install gh -i
 
 # Install Shell Commands
 echo "Installing shell commands..."
@@ -64,6 +65,8 @@ dnf install ripgrep -y
 dnf install zoxide -y
 dnf install entr -y
 dnf install mc -y
+dnf install timeshift -y
+
 
 # Install Utilities
 echo "Installing utilities..."
