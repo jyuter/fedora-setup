@@ -44,12 +44,10 @@ dnf install gh -i
 echo "Installing shell commands..."
 dnf install zsh -y
 dnf install util-linux -y
-dnf install alacritty -y
 dnf install htop -y
 dnf install neofetch -y
 dnf install neovim -y
 dnf install fzf -y
-dnf install ripgrep -y
 dnf install bat -y
 dnf install exa -y
 dnf install ffmpeg -y 
@@ -59,11 +57,8 @@ dnf install lsd -y
 dnf install bpytop -y
 dnf install speedtest-cli -y
 dnf install lolcat -y
-dnf install neovim -y
 dnf install tmux -y
 dnf install timetrap -y
-dnf copr enable atim/starship -y
-dnf install starship -y
 dnf install ripgrep -y
 dnf install zoxide -y
 dnf install entr -y
