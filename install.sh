@@ -73,31 +73,31 @@ wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/do
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip \
 && cd ~/.local/share/fonts \
-&& unzip Meslo.zip \
+&& unzip -o Meslo.zip \
 && rm Meslo.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Lekton.zip \
 && cd ~/.local/share/fonts \
-&& unzip Lekton.zip \
+&& unzip -o Lekton.zip \
 && rm Lekton.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip \
 && cd ~/.local/share/fonts \
-&& unzip RobotoMono.zip \
+&& unzip -o RobotoMono.zip \
 && rm RobotoMono.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip \
 && cd ~/.local/share/fonts \
-&& unzip Mononoki.zip \
+&& unzip -o Mononoki.zip \
 && rm Mononoki.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip \
 && cd ~/.local/share/fonts \
-&& unzip Hack-v3.003-ttf.zip \
+&& unzip -o Hack-v3.003-ttf.zip \
 && rm Hack-v3.003-ttf.zip \
 && fc-cache -fv
 
@@ -190,8 +190,8 @@ dnf install mpv -y
 #flatpak install flathub com.jetbrains.PyCharm-Community -y
 #flatpak install flathub org.zotero.Zotero -y
 #flatpak install flathub com.google.AndroidStudio -y
-#latpak install flathub com.bitwarden.desktop -y
-#latpak install flathub io.github.giantpinkrobots.flatsweep -y
+#flatpak install flathub com.bitwarden.desktop -y
+#flatpak install flathub io.github.giantpinkrobots.flatsweep -y
 #flatpak install flathub com.github.dail8859.NotepadNext -y
 #flatpak install flathub com.todoist.Todoist -y
 #flatpak install flathub md.obsidian.Obsidian -y
