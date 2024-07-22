@@ -52,7 +52,6 @@ dnf install bat -y
 dnf install exa -y
 dnf install ffmpeg -y 
 dnf install cpufetch -y
-dnf install gdu -y
 dnf install lsd -y
 dnf install bpytop -y
 dnf install speedtest-cli -y
@@ -188,12 +187,12 @@ dnf group install Multimedia -y
 dnf install mpv -y
 
 # Install Flatpacks
-flatpak install flathub com.jetbrains.PyCharm-Community -y
-flatpak install flathub org.zotero.Zotero -y
-flatpak install flathub com.google.AndroidStudio -y
-flatpak install flathub com.bitwarden.desktop -y
-flatpak install flathub io.github.giantpinkrobots.flatsweep -y
-flatpak install flathub com.github.dail8859.NotepadNext -y
+#flatpak install flathub com.jetbrains.PyCharm-Community -y
+#flatpak install flathub org.zotero.Zotero -y
+#flatpak install flathub com.google.AndroidStudio -y
+#latpak install flathub com.bitwarden.desktop -y
+#latpak install flathub io.github.giantpinkrobots.flatsweep -y
+#flatpak install flathub com.github.dail8859.NotepadNext -y
 #flatpak install flathub com.todoist.Todoist -y
 #flatpak install flathub md.obsidian.Obsidian -y
 #flatpak install flathub com.github.PintaProject.Pinta -y
