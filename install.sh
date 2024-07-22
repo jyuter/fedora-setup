@@ -106,6 +106,7 @@ echo "Installing utilities..."
 dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
 dnf install timeshift -y
 dnf install dnfdragora -y
+dnf install snapd -y
 
 dnf group install --with-optional virtualization -y
 systemctl start libvirtd
@@ -175,6 +176,12 @@ dnf group install Multimedia -y
 dnf install mpv -y
 
 # Install Flatpacks
+flatpak install flathub com.jetbrains.PyCharm-Community -y
+flatpak install flathub org.zotero.Zotero -y
+flatpak install flathub com.google.AndroidStudio -y
+flatpak install flathub com.bitwarden.desktop -y
+flatpak install flathub io.github.giantpinkrobots.flatsweep -y
+flatpak install flathub com.github.dail8859.NotepadNext -y
 # flatpak install flathub md.obsidian.Obsidian -y
 # flatpak install flathub com.todoist.Todoist -y
 # flatpak install flathub org.telegram.desktop -y
@@ -182,13 +189,7 @@ dnf install mpv -y
 # flatpak install flathub org.signal.Signal -y
 # flatpak install flathub org.audacityteam.Audacity -y
 # flatpak install flathub com.obsproject.Studio -y
-flatpak install flathub com.jetbrains.PyCharm-Community -y
 # flatpak install flathub org.gnome.Loupe -y
 # flatpak install flathub com.github.PintaProject.Pinta -y
-flatpak install flathub org.zotero.Zotero -y
 # flatpak install flathub com.spotify.Client -y
-flatpak install flathub com.google.AndroidStudio -y
-flatpak install flathub com.bitwarden.desktop -y
-flatpak install flathub io.github.giantpinkrobots.flatsweep -y
-flatpak install flathub com.github.dail8859.NotepadNext -y
 # flatpak install flathub xyz.z3ntu.razergenie -y
