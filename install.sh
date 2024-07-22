@@ -103,14 +103,14 @@ wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/dow
 && fc-cache -fv
 
 # Setting up shell
-chsh -s $(which zsh)
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
-wget -q https://raw.githubusercontent.com/jyuter/fedora-setup/main/.p10k.zsh -O ~/.pk10.zsh
-echo '[General]' >> /home/jyuter/.local/share/konsole/Profile 1.profile
-echo 'Command=/bin/zsh' >> /home/jyuter/.local/share/konsole/Init Setup.profile
-echo 'Name=Init Setup' >> /home/jyuter/.local/share/konsole/Init Setup.profile
-echo 'Parent=FALLBACK/' >> /home/jyuter/.local/share/konsole/Init Setup.profile
+sudo -n -i -u jyuter chsh -s $(which zsh)
+sudo -n -i -u jyuter git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+sudo -n -i -u jyuter echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> $HOME/.zshrc
+sudo -n -i -u jyuter wget -q https://raw.githubusercontent.com/jyuter/fedora-setup/main/.p10k.zsh -O ~/.pk10.zsh
+sudo -n -i -u jyuter echo '[General]' >> $HOME/.local/share/konsole/Profile 1.profile
+sudo -n -i -u jyuter echo 'Command=/bin/zsh' >> $HOME/.local/share/konsole/Init Setup.profile
+sudo -n -i -u jyuter echo 'Name=Init Setup' >> $HOME/.local/share/konsole/Init Setup.profile
+sudo -n -i -u jyuter echo 'Parent=FALLBACK/' >> $HOME/.local/share/konsole/Init Setup.profile
 
 
 # Install Utilities
