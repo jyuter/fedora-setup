@@ -76,26 +76,26 @@ wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/do
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip \
 && cd ~/.local/share/fonts \
-&& unzip JetBrainsMono.zip \
-&& rm JetBrainsMono.zip \
+&& unzip Meslo.zip \
+&& rm Meslo.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Lekton.zip \
 && cd ~/.local/share/fonts \
-&& unzip JetBrainsMono.zip \
-&& rm JetBrainsMono.zip \
+&& unzip Lekton.zip \
+&& rm Lekton.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip \
 && cd ~/.local/share/fonts \
-&& unzip JetBrainsMono.zip \
-&& rm JetBrainsMono.zip \
+&& unzip RobotoMono.zip \
+&& rm RobotoMono.zip \
 && fc-cache -fv
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip \
 && cd ~/.local/share/fonts \
-&& unzip JetBrainsMono.zip \
-&& rm JetBrainsMono.zip \
+&& unzip Mononoki.zip \
+&& rm Mononoki.zip \
 && fc-cache -fv
 
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
