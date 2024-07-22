@@ -107,11 +107,16 @@ wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/dow
 && rm Hack-v3.003-ttf.zip \
 && fc-cache -fv
 
+# Setting up shell
 chsh -s $(which zsh)
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+wget -q https://raw.githubusercontent.com/jyuter/fedora-setup/main/.p10k.zsh -O ~/.pk10.zsh
+echo '[General]' >> /home/jyuter/.local/share/konsole/Profile 1.profile
+echo 'Command=/bin/zsh' >> /home/jyuter/.local/share/konsole/Init Setup.profile
+echo 'Name=Init Setup' >> /home/jyuter/.local/share/konsole/Init Setup.profile
+echo 'Parent=FALLBACK/' >> /home/jyuter/.local/share/konsole/Init Setup.profile
+
 
 # Install Utilities
 echo "Installing utilities..."
