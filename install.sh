@@ -1,3 +1,6 @@
+# Set Server Name
+hostnamectl set-hostname fedora
+
 # Init DNF Conf
 echo "Updating dnf.conf..."
 echo "fastestmirror=True" >> /etc/dnf/dnf.conf
@@ -98,6 +101,15 @@ wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/do
 && rm Mononoki.zip \
 && fc-cache -fv
 
+wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip \
+&& cd ~/.local/share/fonts \
+&& unzip Hack-v3.003-ttf.zip \
+&& rm Hack-v3.003-ttf.zip \
+&& fc-cache -fv
+
+chsh -s $(which zsh)
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
@@ -149,7 +161,7 @@ dnf install dnf-plugins-core -y
 dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo 
 dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-wget -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/149282/docker-desktop-4.30.0-x86_64.rpm"
+wget -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
 dnf install ./docker-desktop.rpm -y
 rm ./docker-desktop.rpm 
 
@@ -182,14 +194,11 @@ flatpak install flathub com.google.AndroidStudio -y
 flatpak install flathub com.bitwarden.desktop -y
 flatpak install flathub io.github.giantpinkrobots.flatsweep -y
 flatpak install flathub com.github.dail8859.NotepadNext -y
-# flatpak install flathub md.obsidian.Obsidian -y
-# flatpak install flathub com.todoist.Todoist -y
-# flatpak install flathub org.telegram.desktop -y
-# flatpak install flathub io.github.mimbrero.WhatsAppDesktop =y
-# flatpak install flathub org.signal.Signal -y
+flatpak install flathub com.todoist.Todoist -y
+flatpak install flathub md.obsidian.Obsidian -y
+flatpak install flathub com.github.PintaProject.Pinta -y
 # flatpak install flathub org.audacityteam.Audacity -y
 # flatpak install flathub com.obsproject.Studio -y
 # flatpak install flathub org.gnome.Loupe -y
-# flatpak install flathub com.github.PintaProject.Pinta -y
 # flatpak install flathub com.spotify.Client -y
 # flatpak install flathub xyz.z3ntu.razergenie -y
