@@ -103,7 +103,7 @@ wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/dow
 
 # Setting up shell
 sudo -n -i -u jyuter chsh -s $(which zsh)
-sudo -n -i -u jyuter git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+sudo -n -i -u jyuter git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
 sudo -n -i -u jyuter echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> $HOME/.zshrc
 sudo -n -i -u jyuter wget -q https://raw.githubusercontent.com/jyuter/fedora-setup/main/.p10k.zsh -O ~/.pk10.zsh
 sudo -n -i -u jyuter echo '[General]' >> $HOME/.local/share/konsole/Profile 1.profile
