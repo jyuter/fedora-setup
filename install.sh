@@ -101,17 +101,6 @@ wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/dow
 && rm Hack-v3.003-ttf.zip \
 && fc-cache -fv
 
-# Setting up shell
-sudo -n -i -u jyuter chsh -s $(which zsh)
-sudo -n -i -u jyuter git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
-sudo -n -i -u jyuter echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> $HOME/.zshrc
-sudo -n -i -u jyuter wget -q https://raw.githubusercontent.com/jyuter/fedora-setup/main/.p10k.zsh -O ~/.pk10.zsh
-sudo -n -i -u jyuter echo '[General]' >> $HOME/.local/share/konsole/Profile 1.profile
-sudo -n -i -u jyuter echo 'Command=/bin/zsh' >> $HOME/.local/share/konsole/Init Setup.profile
-sudo -n -i -u jyuter echo 'Name=Init Setup' >> $HOME/.local/share/konsole/Init Setup.profile
-sudo -n -i -u jyuter echo 'Parent=FALLBACK/' >> $HOME/.local/share/konsole/Init Setup.profile
-
-
 # Install Utilities
 echo "Installing utilities..."
 dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
@@ -143,9 +132,9 @@ dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
 dnf install rustup -y
 
 dnf install golang -y
-sudo -n -i -u jyuter mkdir -p $HOME/go
-sudo -n -i -u jyuter echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
-sudo -n -i -u jyuter source $HOME/.bashrc
+sudo -n -i -u jyuter mkdir -p ~/go
+sudo -n -i -u jyuter echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+sudo -n -i -u jyuter source ~/.bashrc
 
 dnf install nodejs -y
 npm install -g npm@latest
