@@ -102,8 +102,7 @@ wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/dow
 && fc-cache -fv
 
 # Shell Utils
-sudo -n -i -u jyuter git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-sudo -n -i -u jyuter echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
 
 # Install Utilities
 echo "Installing utilities..."
