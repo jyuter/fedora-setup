@@ -1,5 +1,5 @@
 # Set Server Name
-hostnamectl set-hostname fedora
+hostnamectl set-hostname hp-fedora
 
 # Init DNF Conf
 echo "Updating dnf.conf..."
