@@ -62,6 +62,7 @@ dnf install ripgrep -y
 dnf install zoxide -y
 dnf install entr -y
 dnf install mc -y
+dnf install stow -y
 
 #Install Fonts
 echo "Installing fonts..."
