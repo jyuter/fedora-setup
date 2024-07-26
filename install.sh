@@ -63,6 +63,7 @@ dnf install zoxide -y
 dnf install entr -y
 dnf install mc -y
 dnf install stow -y
+dnf install kvantum -y
 
 #Install Fonts
 echo "Installing fonts..."
