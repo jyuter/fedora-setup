@@ -71,37 +71,43 @@ wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/do
 && cd ~/.local/share/fonts \
 && unzip JetBrainsMono.zip \
 && rm JetBrainsMono.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip \
 && cd ~/.local/share/fonts \
 && unzip -o Meslo.zip \
 && rm Meslo.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Lekton.zip \
 && cd ~/.local/share/fonts \
 && unzip -o Lekton.zip \
 && rm Lekton.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip \
 && cd ~/.local/share/fonts \
 && unzip -o RobotoMono.zip \
 && rm RobotoMono.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip \
 && cd ~/.local/share/fonts \
 && unzip -o Mononoki.zip \
 && rm Mononoki.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip \
 && cd ~/.local/share/fonts \
 && unzip -o Hack-v3.003-ttf.zip \
 && rm Hack-v3.003-ttf.zip \
-&& fc-cache -fv
+&& fc-cache -fv \
+&& cd ~
 
 # Shell Utils
 sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
