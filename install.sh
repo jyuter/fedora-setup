@@ -49,7 +49,7 @@ dnf install neofetch -y
 dnf install neovim -y
 dnf install fzf -y
 dnf install bat -y
-dnf install exa -y
+dnf install eza -y
 dnf install ffmpeg -y 
 dnf install cpufetch -y
 dnf install lsd -y
