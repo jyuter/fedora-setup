@@ -140,6 +140,13 @@ dnf install redis -y
 systemctl enable redis
 dnf install rabbitmq-server -y
 
+dnf install nginx -y
+systemctl enable nginx
+systemctl start nginx
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
+
 dnf install ruby -y
 dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
 
