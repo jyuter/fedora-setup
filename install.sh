@@ -136,6 +136,8 @@ dnf install gcc -y
 dnf install elixir -y
 dnf install php-cli phpunit composer -y
 dnf install erlang -y
+dnf install redis -y
+systemctl enable redis
 
 dnf install ruby -y
 dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
