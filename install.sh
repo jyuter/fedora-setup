@@ -138,6 +138,7 @@ dnf install php-cli phpunit composer -y
 dnf install erlang -y
 dnf install redis -y
 systemctl enable redis
+dnf install rabbitmq-server -y
 
 dnf install ruby -y
 dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
