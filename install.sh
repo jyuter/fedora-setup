@@ -67,50 +67,52 @@ dnf install kvantum -y
 
 #Install Fonts
 echo "Installing fonts..."
+mkdir -p /usr/local/share/fonts/nerdfonts
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip \
-&& cd ~/.local/share/fonts \
+&& cd /usr/local/share/fonts/nerdfonts \
 && unzip JetBrainsMono.zip \
 && rm JetBrainsMono.zip \
-&& fc-cache -fv \
 && cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip \
-&& cd ~/.local/share/fonts \
+&& cd /usr/local/share/fonts/nerdfonts \
 && unzip -o Meslo.zip \
 && rm Meslo.zip \
-&& fc-cache -fv \
 && cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Lekton.zip \
-&& cd ~/.local/share/fonts \
-&& unzip -o Lekton.zip \
+&& cd /usr/local/share/fonts/nerdfonts \
 && rm Lekton.zip \
-&& fc-cache -fv \
 && cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip \
-&& cd ~/.local/share/fonts \
+&& cd /usr/local/share/fonts/nerdfonts \
 && unzip -o RobotoMono.zip \
 && rm RobotoMono.zip \
-&& fc-cache -fv \
 && cd ~
 
 wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip \
-&& cd ~/.local/share/fonts \
+&& cd /usr/local/share/fonts/nerdfonts \
 && unzip -o Mononoki.zip \
 && rm Mononoki.zip \
-&& fc-cache -fv \
 && cd ~
 
 wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip \
-&& cd ~/.local/share/fonts \
+&& cd /usr/local/share/fonts/nerdfonts \
 && unzip -o Hack-v3.003-ttf.zip \
 && rm Hack-v3.003-ttf.zip \
-&& fc-cache -fv \
 && cd ~
 
 # Shell Utils
-sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf -P /usr/local/share/fonts/nerdfonts
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf -P /usr/local/share/fonts/nerdfonts
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf -P /usr/local/share/fonts/nerdfonts
+wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf -P /usr/local/share/fonts/nerdfonts
+
+
+fc-cache -v
 
 # Install Utilities
 echo "Installing utilities..."
@@ -197,7 +199,7 @@ dnf group install Multimedia -y
 dnf install mpv -y
 
 # Install Flatpacks
-flatpak install flathub com.jetbrains.PyCharm-Community -y
+#flatpak install flathub com.jetbrains.PyCharm-Community -y
 flatpak install flathub org.zotero.Zotero -y
 flatpak install flathub com.google.AndroidStudio -y
 flatpak install flathub com.bitwarden.desktop -y
