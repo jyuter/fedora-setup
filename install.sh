@@ -192,6 +192,13 @@ dnf install fedora-workstation-repositories -y
 dnf config-manager --set-enabled google-chrome 
 dnf install google-chrome-stable -y
 
+
+# Install Brave...
+dnf install dnf-plugins-core -y
+dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+dnf install brave-browser -y
+
 # Install Media
 echo "Installing media..."
 dnf install vlc -y
