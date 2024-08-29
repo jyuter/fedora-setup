@@ -38,7 +38,7 @@ echo "Installing git..."
 dnf install git -y
 sudo -n -i -u jyuter git config --global user.name "Josh Yuter"
 sudo -n -i -u jyuter git config --global user.email "jyuter@gmail.com"
-dnf install gh -i
+dnf install gh -y
 
 # Install Shell Commands
 echo "Installing shell commands..."
