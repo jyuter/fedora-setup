@@ -137,6 +137,8 @@ dnf install dotnet-sdk-8.0 -y
 dnf install gcc -y
 dnf install elixir -y
 dnf install php-cli phpunit composer -y
+dnf install php-pdo -y
+dnf install php-pdo_mysql -y
 dnf install erlang -y
 dnf install redis -y
 systemctl enable redis
