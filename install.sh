@@ -120,6 +120,7 @@ dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq
 dnf install timeshift -y
 dnf install dnfdragora -y
 dnf install snapd -y
+ln -s /var/lib/snapd/snap /snap
 
 dnf group install --with-optional virtualization -y
 systemctl start libvirtd
