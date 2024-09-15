@@ -64,6 +64,7 @@ dnf install entr -y
 dnf install mc -y
 dnf install stow -y
 dnf install kvantum -y
+dnf install ksnip -y
 
 #Install Fonts
 echo "Installing fonts..."
