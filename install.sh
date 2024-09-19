@@ -190,6 +190,11 @@ echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com
 dnf check-update
 dnf install code -y
 
+# Install API Testing
+sudo snap install bruno
+sudo snap install postman
+sudo snap install insomnia
+
 # Install Chrome
 echo "Installing Chrome..."
 dnf install fedora-workstation-repositories -y
