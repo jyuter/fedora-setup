@@ -66,6 +66,11 @@ dnf install stow -y
 dnf install kvantum -y
 dnf install ksnip -y
 
+
+#Install Shell
+dnf copr enable quintiliano/ghostty -y
+dnf install ghostty -y
+
 #Install Fonts
 echo "Installing fonts..."
 mkdir -p /usr/local/share/fonts/nerdfonts
