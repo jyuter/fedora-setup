@@ -7,10 +7,7 @@ USERHOME="/home/$USERNAME"
 echo "=== Starting Fedora KDE Setup ==="
 
 # --- Hostname ---
-if [[ "$(hostname)" != "hp-fedora" ]]; then
-    hostnamectl set-hostname hp-fedora
-    echo "Hostname set to hp-fedora"
-fi
+[[ "$(hostname)" != "hp-fedora" ]] && hostnamectl set-hostname hp-fedora
 
 # --- DNF config ---
 DNF_CONF="/etc/dnf/dnf.conf"
@@ -22,11 +19,9 @@ max_parallel_downloads=10
 defaultyes=True
 keepcache=True
 EOF
-    echo "Updated dnf.conf"
 fi
 
-# --- System update ---
-echo "Updating system..."
+# --- Update system ---
 dnf upgrade --refresh -y
 dnf install -y dnf-automatic dnf-plugins-core
 
@@ -45,21 +40,17 @@ fi
 dnf install -y openrazer-meta
 
 # --- Enable Flathub ---
-if ! flatpak remotes | grep -q flathub; then
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-fi
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # --- Git & GitHub ---
 for pkg in git gh; do
-    if ! dnf list installed $pkg &>/dev/null; then
-        dnf install -y $pkg
-    fi
+    dnf list installed $pkg &>/dev/null || dnf install -y $pkg
 done
 sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
 sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
 
-# --- Shell & Utilities ---
-UTILS=(zsh util-linux htop neofetch neovim fzf bat eza ffmpeg bpytop speedtest-cli lolcat tmux \
+# --- Utilities & Shell ---
+UTILS=(zsh util-linux htop neofetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop speedtest-cli lolcat tmux \
 ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
 dnf install -y "${UTILS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
@@ -68,19 +59,13 @@ ln -s /var/lib/snapd/snap /snap || true
 FONT_DIR="/usr/local/share/fonts/nerdfonts"
 mkdir -p "$FONT_DIR"
 cd "$FONT_DIR"
-declare -a FONTS=("JetBrainsMono" "Meslo" "Lekton" "RobotoMono" "Mononoki")
+FONTS=(JetBrainsMono Meslo Lekton RobotoMono Mononoki)
 for font in "${FONTS[@]}"; do
-    if [ ! -f "$FONT_DIR/${font}.ttf" ]; then
-        wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip"
-        unzip -o "${font}.zip"
-        rm -f "${font}.zip"
-    fi
+    [ ! -f "${font}.ttf" ] && wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip" \
+        && unzip -o "${font}.zip" && rm -f "${font}.zip"
 done
-if [ ! -f "$FONT_DIR/Hack-Regular.ttf" ]; then
-    wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
-    unzip -o Hack-v3.003-ttf.zip
-    rm -f Hack-v3.003-ttf.zip
-fi
+[ ! -f Hack-Regular.ttf ] && wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip" \
+    && unzip -o Hack-v3.003-ttf.zip && rm -f Hack-v3.003-ttf.zip
 fc-cache -v
 
 # --- Powerlevel10k ---
@@ -90,7 +75,7 @@ if [ ! -d "$USERHOME/powerlevel10k" ]; then
     chown -R "$USERNAME":"$USERNAME" "$USERHOME/powerlevel10k" "$USERHOME/.zshrc"
 fi
 
-# --- Dev Tools ---
+# --- Development tools ---
 DEV_PKGS=(dotnet-sdk-8.0 gcc elixir php-cli phpunit composer php-pdo php-pdo_mysql erlang redis rabbitmq-server nginx ruby rustup golang nodejs)
 dnf install -y "${DEV_PKGS[@]}"
 systemctl enable redis nginx
@@ -102,24 +87,13 @@ firewall-cmd --reload
 dnf install -y podman
 dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
 dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-if [ ! -f "./docker-desktop.rpm" ]; then
-    wget -q -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
-    dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
-fi
+wget -q -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
+dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
 systemctl enable --now docker
 
-# --- Editors & API testing ---
-dnf install -y code
-snap install bruno
-snap install postman
-
-# --- Browsers ---
-dnf install -y fedora-workstation-repositories
-dnf config-manager --set-enabled google-chrome
-dnf install -y google-chrome-stable
-dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-dnf install -y brave-browser
+# --- Editors & Browsers ---
+dnf install -y code firefox google-chrome-stable brave-browser
+snap install bruno postman
 
 # --- Media ---
 dnf swap ffmpeg-free ffmpeg --allowerasing -y
@@ -134,10 +108,10 @@ for app in "${FLATPAKS[@]}"; do
     flatpak install -y flathub "$app"
 done
 
-# --- KDE personalization ---
-echo "Applying wallpapers, lock/login, and user photo..."
+# --- KDE Personalization ---
 sudo -u "$USERNAME" mkdir -p "$USERHOME/Pictures/setup"
 cd "$USERHOME/Pictures/setup"
+
 IMG_URLS=(
 "https://github.com/jyuter/fedora-setup/raw/main/images/Profile-Podcast.png:user.png"
 "https://github.com/jyuter/fedora-setup/raw/main/images/hamlet.jpg:wallpaper.jpg"
@@ -147,40 +121,58 @@ IMG_URLS=(
 for pair in "${IMG_URLS[@]}"; do
     url="${pair%%:*}"
     file="${pair##*:}"
-    if [ ! -f "$file" ]; then
-        wget -q "$url" -O "$file"
-    fi
+    [ ! -f "$file" ] && wget -q "$url" -O "$file"
 done
 
-# User account photo
+# User photo
 cp user.png /var/lib/AccountsService/icons/$USERNAME.png
 cat <<EOF >/var/lib/AccountsService/users/$USERNAME
 [User]
 Icon=/var/lib/AccountsService/icons/$USERNAME.png
 EOF
 
-# Desktop wallpaper & panel
-sudo -u "$USERNAME" dbus-launch --exit-with-session bash -c "
-  plasma-apply-wallpaperimage $USERHOME/Pictures/setup/wallpaper.jpg
-  qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
-    var allDesktops = desktops();
-    for (i=0; i<allDesktops.length; i++) {
-      d = allDesktops[i];
-      d.wallpaperPlugin = \"org.kde.image\";
-      d.currentConfigGroup = [\"Wallpaper\", \"org.kde.image\", \"General\"];
-      d.writeConfig(\"Image\", \"file://$USERHOME/Pictures/setup/wallpaper.jpg\");
-    }'
-"
-
-# Panels/widgets (basic example)
+# KDE Plasma setup: panels, widgets, and pinned apps
 sudo -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
-var panel = new Panel;
-panel.location = "bottom";
-panel.addWidget("org.kde.plasma.taskmanager");
-panel.addWidget("org.kde.plasma.digitalclock");
+var desktops = desktops();
+for (var i = 0; i < desktops.length; i++) {
+    var d = desktops[i];
+    d.wallpaperPlugin = "org.kde.image";
+    d.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
+    d.writeConfig("Image", "file://'$USERHOME'/Pictures/setup/wallpaper.jpg");
+}
+
+// --- Bottom Panel ---
+var bottomPanel = new Panel;
+bottomPanel.location = "bottom";
+bottomPanel.alignment = 0;
+bottomPanel.height = 0.06;
+bottomPanel.locked = true;
+bottomPanel.addWidget("org.kde.plasma.appmenu");
+var taskManager = bottomPanel.addWidget("org.kde.plasma.taskmanager");
+taskManager.writeConfig("favorites", "konsole.desktop,firefox.desktop,com.ticktick.TickTick.desktop,code.desktop");
+taskManager.reloadConfig();
+bottomPanel.addWidget("org.kde.plasma.systemtray");
+
+// --- Top Panel ---
+var topPanel = new Panel;
+topPanel.location = "top";
+topPanel.height = 0.04;
+topPanel.addWidget("org.kde.plasma.digitalclock");
+topPanel.addWidget("org.kde.plasma.battery");
 '
 
-# SDDM login & lock screens
+# Breeze Dark
+lookandfeeltool --apply org.kde.breezedark.desktop
+
+# Timezone and 24h clock
+timedatectl set-timezone Asia/Jerusalem
+gsettings set org.kde.kglobalaccel.khotkeys clock24h true || true
+
+# Hebrew Keyboard
+dnf install -y ibus ibus-hspell
+localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
+
+# SDDM login & lock screen
 sudo cp login.jpg /usr/share/sddm/themes/breeze/
 sudo cp lock.jpg /usr/share/sddm/themes/breeze/
 sudo sed -i 's|^Current=.*|Current=breeze|' /etc/sddm.conf || true
