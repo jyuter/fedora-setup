@@ -23,16 +23,13 @@ fi
 
 # --- Update system ---
 dnf upgrade --refresh -y
-dnf install -y dnf-automatic dnf-plugins-core wget unzip
+dnf install -y dnf-automatic dnf-plugins-core wget unzip git gh zsh util-linux htop fastfetch neovim fzf bat cpufetch lsd \
+speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd ibus ibus-hspell
+
+ln -s /var/lib/snapd/snap /snap || true
 
 # --- Enable Flathub ---
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-# --- Core utilities ---
-CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat cpufetch lsd \
-speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd)
-dnf install -y "${CORE_PKGS[@]}"
-ln -s /var/lib/snapd/snap /snap || true
 
 # --- Git configuration ---
 sudo -i -u "$USERNAME" env PATH=$PATH bash <<'EOF'
@@ -86,8 +83,9 @@ dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
 systemctl enable --now docker
 
 # --- Editors & Browsers ---
-dnf install -y code firefox google-chrome-stable brave-browser
-snap install bruno postman
+dnf install -y --skip-broken code firefox google-chrome brave-browser
+snap install bruno || true
+snap install postman || true
 
 # --- Multimedia (without ffmpeg) ---
 dnf install -y vlc mpv intel-media-driver
@@ -156,7 +154,6 @@ lookandfeeltool --apply org.kde.breezedark.desktop
 timedatectl set-timezone Asia/Jerusalem
 
 # Hebrew keyboard
-dnf install -y ibus ibus-hspell
 localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
 
 # SDDM login & lock screen
