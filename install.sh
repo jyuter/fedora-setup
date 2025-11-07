@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Fedora KDE Setup Script
+# Source: https://raw.githubusercontent.com/jyuter/fedora-setup/refs/heads/main/install.sh
+
 USERNAME="jyuter"
 USERHOME="/home/$USERNAME"
 
