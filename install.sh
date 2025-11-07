@@ -29,7 +29,7 @@ dnf install -y dnf-automatic dnf-plugins-core wget unzip
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # --- Core utilities ---
-CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat ffmpeg cpufetch lsd \
+CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat cpufetch lsd \
 speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd)
 dnf install -y "${CORE_PKGS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
@@ -89,19 +89,9 @@ systemctl enable --now docker
 dnf install -y code firefox google-chrome-stable brave-browser
 snap install bruno postman
 
-# --- Multimedia / ffmpeg ---
+# --- Multimedia (without ffmpeg) ---
 dnf install -y vlc mpv intel-media-driver
 dnf group install -y Multimedia
-
-# Remove conflicting ffmpeg-free first
-dnf remove -y ffmpeg-free --skip-broken || true
-
-# Install RPMFusion ffmpeg
-dnf install -y ffmpeg --allowerasing
-
-# Update multimedia packages
-dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
-dnf update @sound-and-video -y
 
 # --- Flatpaks ---
 FLATPAKS=(org.zotero.Zotero com.bitwarden.desktop io.github.giantpinkrobots.flatsweep com.github.dail8859.NotepadNext com.ticktick.TickTick com.github.PintaProject.Pinta)
