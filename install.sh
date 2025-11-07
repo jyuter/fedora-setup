@@ -7,7 +7,9 @@ USERHOME="/home/$USERNAME"
 echo "=== Starting Fedora KDE Setup ==="
 
 # --- Hostname ---
-[[ "$(hostname)" != "hp-fedora" ]] && hostnamectl set-hostname hp-fedora
+if [ "$(hostname)" != "hp-fedora" ]; then
+    hostnamectl set-hostname hp-fedora
+fi
 
 # --- DNF config ---
 DNF_CONF="/etc/dnf/dnf.conf"
@@ -44,7 +46,7 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 # --- Git & GitHub ---
 for pkg in git gh; do
-    dnf list installed $pkg &>/dev/null || dnf install -y $pkg
+    dnf list installed "$pkg" &>/dev/null || dnf install -y "$pkg"
 done
 sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
 sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
@@ -64,11 +66,17 @@ mkdir -p "$FONT_DIR"
 cd "$FONT_DIR"
 FONTS=(JetBrainsMono Meslo Lekton RobotoMono Mononoki)
 for font in "${FONTS[@]}"; do
-    [ ! -f "${font}.ttf" ] && wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip" \
-        && unzip -o "${font}.zip" && rm -f "${font}.zip"
+    if [ ! -f "${font}.ttf" ]; then
+        wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip"
+        unzip -o "${font}.zip"
+        rm -f "${font}.zip"
+    fi
 done
-[ ! -f Hack-Regular.ttf ] && wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip" \
-    && unzip -o Hack-v3.003-ttf.zip && rm -f Hack-v3.003-ttf.zip
+if [ ! -f Hack-Regular.ttf ]; then
+    wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+    unzip -o Hack-v3.003-ttf.zip
+    rm -f Hack-v3.003-ttf.zip
+fi
 fc-cache -v
 
 # --- Powerlevel10k ---
