@@ -1,237 +1,189 @@
-# Set Server Name
-hostnamectl set-hostname hp-fedora
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Init DNF Conf
-echo "Updating dnf.conf..."
-echo "fastestmirror=True" >> /etc/dnf/dnf.conf
-echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
-echo "defaultyes=True" >> /etc/dnf/dnf.conf
-echo "keepchache=True" >> /etc/dnf/dnf.conf
+USERNAME="jyuter"
+USERHOME="/home/$USERNAME"
 
-# Initial Updates
-echo "Running initial updates..."
+echo "=== Starting Fedora KDE Setup ==="
+
+# --- Hostname ---
+if [[ "$(hostname)" != "hp-fedora" ]]; then
+    hostnamectl set-hostname hp-fedora
+    echo "Hostname set to hp-fedora"
+fi
+
+# --- DNF config ---
+DNF_CONF="/etc/dnf/dnf.conf"
+if ! grep -q "fastestmirror=True" "$DNF_CONF"; then
+    cat <<EOF >/etc/dnf/dnf.conf
+[main]
+fastestmirror=True
+max_parallel_downloads=10
+defaultyes=True
+keepcache=True
+EOF
+    echo "Updated dnf.conf"
+fi
+
+# --- System update ---
+echo "Updating system..."
 dnf upgrade --refresh -y
-dnf groupupdate core -y
-dnf install dnf-automatic -y
+dnf install -y dnf-automatic dnf-plugins-core
 
-# Enable RPM Fusion
-echo "Enabling RPM Fusion..."
-dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
+# --- RPM Fusion ---
+for repo in free nonfree; do
+    if ! dnf repolist | grep -q rpmfusion-$repo; then
+        dnf install -y "https://download1.rpmfusion.org/$repo/fedora/rpmfusion-$repo-release-$(rpm -E %fedora).noarch.rpm"
+    fi
+done
 
-# Firmware Updates
-# echo "Updating firmware..."
-# fwupdmgr refresh --force
-# fwupdmgr get-updates
-# fwupdmgr update -y
+# --- Kernel dev and Razer ---
+dnf install -y kernel-devel
+if ! dnf repolist | grep -q hardware:/razer; then
+    dnf config-manager --add-repo "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo"
+fi
+dnf install -y openrazer-meta
 
-dnf install kernel-devel -y
-dnf config-manager --add-repo https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo -y
-dnf install openrazer-meta -y
+# --- Enable Flathub ---
+if ! flatpak remotes | grep -q flathub; then
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+fi
 
-# Enable Flathub
-echo "Enabling Flathub..."
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+# --- Git & GitHub ---
+for pkg in git gh; do
+    if ! dnf list installed $pkg &>/dev/null; then
+        dnf install -y $pkg
+    fi
+done
+sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
+sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
 
-# Install Git
-echo "Installing git..."
-dnf install git -y
-sudo -n -i -u jyuter git config --global user.name "Josh Yuter"
-sudo -n -i -u jyuter git config --global user.email "jyuter@gmail.com"
-dnf install gh -y
+# --- Shell & Utilities ---
+UTILS=(zsh util-linux htop neofetch neovim fzf bat eza ffmpeg bpytop speedtest-cli lolcat tmux \
+ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
+dnf install -y "${UTILS[@]}"
+ln -s /var/lib/snapd/snap /snap || true
 
-# Install Shell Commands
-echo "Installing shell commands..."
-dnf install zsh -y
-dnf install util-linux -y
-dnf install htop -y
-dnf install neofetch -y
-dnf install neovim -y
-dnf install fzf -y
-dnf install bat -y
-dnf install eza -y
-dnf install ffmpeg -y 
-dnf install cpufetch -y
-dnf install lsd -y
-dnf install bpytop -y
-dnf install speedtest-cli -y
-dnf install lolcat -y
-dnf install tmux -y
-dnf install timetrap -y
-dnf install ripgrep -y
-dnf install zoxide -y
-dnf install entr -y
-dnf install mc -y
-dnf install stow -y
-dnf install kvantum -y
-dnf install ksnip -y
-
-
-#Install Shell
-dnf copr enable quintiliano/ghostty -y
-dnf install ghostty -y
-
-#Install Fonts
-echo "Installing fonts..."
-mkdir -p /usr/local/share/fonts/nerdfonts
-wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& unzip JetBrainsMono.zip \
-&& rm JetBrainsMono.zip \
-&& cd ~
-
-wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Meslo.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& unzip -o Meslo.zip \
-&& rm Meslo.zip \
-&& cd ~
-
-wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Lekton.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& rm Lekton.zip \
-&& cd ~
-
-wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/RobotoMono.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& unzip -o RobotoMono.zip \
-&& rm RobotoMono.zip \
-&& cd ~
-
-wget -P ~/.local/share/fonts https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Mononoki.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& unzip -o Mononoki.zip \
-&& rm Mononoki.zip \
-&& cd ~
-
-wget -P ~/.local/share/fonts https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip \
-&& cd /usr/local/share/fonts/nerdfonts \
-&& unzip -o Hack-v3.003-ttf.zip \
-&& rm Hack-v3.003-ttf.zip \
-&& cd ~
-
-# Shell Utils
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf -P /usr/local/share/fonts/nerdfonts
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf -P /usr/local/share/fonts/nerdfonts
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf -P /usr/local/share/fonts/nerdfonts
-wget https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf -P /usr/local/share/fonts/nerdfonts
-
-
+# --- Fonts ---
+FONT_DIR="/usr/local/share/fonts/nerdfonts"
+mkdir -p "$FONT_DIR"
+cd "$FONT_DIR"
+declare -a FONTS=("JetBrainsMono" "Meslo" "Lekton" "RobotoMono" "Mononoki")
+for font in "${FONTS[@]}"; do
+    if [ ! -f "$FONT_DIR/${font}.ttf" ]; then
+        wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip"
+        unzip -o "${font}.zip"
+        rm -f "${font}.zip"
+    fi
+done
+if [ ! -f "$FONT_DIR/Hack-Regular.ttf" ]; then
+    wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+    unzip -o Hack-v3.003-ttf.zip
+    rm -f Hack-v3.003-ttf.zip
+fi
 fc-cache -v
 
-# Install Utilities
-echo "Installing utilities..."
-dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/40/winehq.repo -y
-dnf install timeshift -y
-dnf install dnfdragora -y
-dnf install snapd -y
-ln -s /var/lib/snapd/snap /snap
+# --- Powerlevel10k ---
+if [ ! -d "$USERHOME/powerlevel10k" ]; then
+    sudo -u "$USERNAME" git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$USERHOME/powerlevel10k"
+    echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> "$USERHOME/.zshrc"
+    chown -R "$USERNAME":"$USERNAME" "$USERHOME/powerlevel10k" "$USERHOME/.zshrc"
+fi
 
-dnf group install --with-optional virtualization -y
-systemctl start libvirtd
-systemctl enable libvirtd
-dnf install freerdp -y
+# --- Dev Tools ---
+DEV_PKGS=(dotnet-sdk-8.0 gcc elixir php-cli phpunit composer php-pdo php-pdo_mysql erlang redis rabbitmq-server nginx ruby rustup golang nodejs)
+dnf install -y "${DEV_PKGS[@]}"
+systemctl enable redis nginx
+systemctl start nginx
+firewall-cmd --permanent --add-service={http,https}
+firewall-cmd --reload
 
+# --- Containers ---
+dnf install -y podman
+dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+if [ ! -f "./docker-desktop.rpm" ]; then
+    wget -q -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
+    dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
+fi
+systemctl enable --now docker
+
+# --- Editors & API testing ---
+dnf install -y code
+snap install bruno
+snap install postman
+
+# --- Browsers ---
+dnf install -y fedora-workstation-repositories
+dnf config-manager --set-enabled google-chrome
+dnf install -y google-chrome-stable
+dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+dnf install -y brave-browser
+
+# --- Media ---
 dnf swap ffmpeg-free ffmpeg --allowerasing -y
 dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
 dnf update @sound-and-video -y
-dnf install intel-media-driver -y
+dnf install -y intel-media-driver vlc mpv
+dnf group install -y Multimedia
 
-# Install Programming Tools
-echo "Install development tools..."
-dnf install dotnet-sdk-8.0 -y
-dnf install gcc -y
-dnf install elixir -y
-dnf install php-cli phpunit composer -y
-dnf install php-pdo -y
-dnf install php-pdo_mysql -y
-dnf install erlang -y
-dnf install redis -y
-systemctl enable redis
-dnf install rabbitmq-server -y
+# --- Flatpaks ---
+FLATPAKS=(org.zotero.Zotero com.bitwarden.desktop io.github.giantpinkrobots.flatsweep com.github.dail8859.NotepadNext com.ticktick.TickTick com.github.PintaProject.Pinta)
+for app in "${FLATPAKS[@]}"; do
+    flatpak install -y flathub "$app"
+done
 
-dnf install nginx -y
-systemctl enable nginx
-systemctl start nginx
-firewall-cmd --permanent --add-service=http
-firewall-cmd --permanent --add-service=https
-firewall-cmd --reload
+# --- KDE personalization ---
+echo "Applying wallpapers, lock/login, and user photo..."
+sudo -u "$USERNAME" mkdir -p "$USERHOME/Pictures/setup"
+cd "$USERHOME/Pictures/setup"
+IMG_URLS=(
+"https://github.com/jyuter/fedora-setup/raw/main/images/Profile-Podcast.png:user.png"
+"https://github.com/jyuter/fedora-setup/raw/main/images/hamlet.jpg:wallpaper.jpg"
+"https://github.com/jyuter/fedora-setup/raw/main/images/northern-lights.jpg:login.jpg"
+"https://github.com/jyuter/fedora-setup/raw/main/images/mountain-purple.jpg:lock.jpg"
+)
+for pair in "${IMG_URLS[@]}"; do
+    url="${pair%%:*}"
+    file="${pair##*:}"
+    if [ ! -f "$file" ]; then
+        wget -q "$url" -O "$file"
+    fi
+done
 
-dnf install ruby -y
-dnf install rubygem-{irb,rake,rbs,rexml,typeprof,test-unit} ruby-bundled-gems -y
+# User account photo
+cp user.png /var/lib/AccountsService/icons/$USERNAME.png
+cat <<EOF >/var/lib/AccountsService/users/$USERNAME
+[User]
+Icon=/var/lib/AccountsService/icons/$USERNAME.png
+EOF
 
-dnf install rustup -y
+# Desktop wallpaper & panel
+sudo -u "$USERNAME" dbus-launch --exit-with-session bash -c "
+  plasma-apply-wallpaperimage $USERHOME/Pictures/setup/wallpaper.jpg
+  qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    var allDesktops = desktops();
+    for (i=0; i<allDesktops.length; i++) {
+      d = allDesktops[i];
+      d.wallpaperPlugin = \"org.kde.image\";
+      d.currentConfigGroup = [\"Wallpaper\", \"org.kde.image\", \"General\"];
+      d.writeConfig(\"Image\", \"file://$USERHOME/Pictures/setup/wallpaper.jpg\");
+    }'
+"
 
-dnf install golang -y
-sudo -n -i -u jyuter mkdir -p ~/go
-sudo -n -i -u jyuter echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-sudo -n -i -u jyuter source ~/.bashrc
+# Panels/widgets (basic example)
+sudo -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+var panel = new Panel;
+panel.location = "bottom";
+panel.addWidget("org.kde.plasma.taskmanager");
+panel.addWidget("org.kde.plasma.digitalclock");
+'
 
-dnf install nodejs -y
-npm install -g npm@latest
-npm install -g pnpm
-npm install -g bun 
+# SDDM login & lock screens
+sudo cp login.jpg /usr/share/sddm/themes/breeze/
+sudo cp lock.jpg /usr/share/sddm/themes/breeze/
+sudo sed -i 's|^Current=.*|Current=breeze|' /etc/sddm.conf || true
+sudo sed -i 's|^#Background=.*|Background=/usr/share/sddm/themes/breeze/login.jpg|' /etc/sddm.conf || true
 
-# Install Containers
-echo "Installing containers..."
-dnf install podman -y
-
-dnf install dnf-plugins-core -y
-dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo 
-dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-wget -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
-dnf install ./docker-desktop.rpm -y
-rm ./docker-desktop.rpm 
-
-systemctl start docker
-systemctl enable docker
-
-# Install VSCode
-echo "Installing VS Code..."
-rpm --import https://packages.microsoft.com/keys/microsoft.asc
-echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
-dnf check-update
-dnf install code -y
-
-# Install API Testing
-sudo snap install bruno
-sudo snap install postman
-sudo snap install insomnia
-
-# Install Chrome
-echo "Installing Chrome..."
-dnf install fedora-workstation-repositories -y
-dnf config-manager --set-enabled google-chrome 
-dnf install google-chrome-stable -y
-
-
-# Install Brave...
-dnf install dnf-plugins-core -y
-dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-dnf install brave-browser -y
-
-# Install Media
-echo "Installing media..."
-dnf install vlc -y
-dnf group install Multimedia -y
-dnf install mpv -y
-
-# Install Flatpacks
-#flatpak install flathub com.jetbrains.PyCharm-Community -y
-flatpak install flathub org.zotero.Zotero -y
-flatpak install flathub com.google.AndroidStudio -y
-flatpak install flathub com.bitwarden.desktop -y
-flatpak install flathub io.github.giantpinkrobots.flatsweep -y
-flatpak install flathub com.github.dail8859.NotepadNext -y
-flatpak install flathub com.todoist.Todoist -y
-flatpak install flathub com.github.PintaProject.Pinta -y
-#flatpak install flathub xyz.z3ntu.razergenie -y
-#flatpak install flathub md.obsidian.Obsidian -y
-# flatpak install flathub org.audacityteam.Audacity -y
-# flatpak install flathub com.obsproject.Studio -y
-# flatpak install flathub org.gnome.Loupe -y
-# flatpak install flathub com.spotify.Client -y
-
+echo "✅ Fedora KDE Setup complete!"
