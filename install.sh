@@ -83,7 +83,26 @@ dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
 systemctl enable --now docker
 
 # --- Editors & Browsers ---
-dnf install -y --skip-broken code firefox google-chrome brave-browser
+# VS Code
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+cat <<EOF | sudo tee /etc/yum.repos.d/vscode.repo
+[code]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
+dnf check-update
+dnf install -y --skip-unavailable code
+
+# Firefox & Google Chrome
+dnf install -y --skip-unavailable firefox
+dnf install -y --skip-unavailable fedora-workstation-repositories
+dnf config-manager --set-enabled google-chrome
+dnf install -y --skip-unavailable google-chrome
+
+# Snap apps
 snap install bruno || true
 snap install postman || true
 
@@ -120,7 +139,7 @@ cat <<EOF >/var/lib/AccountsService/users/$USERNAME
 Icon=/var/lib/AccountsService/icons/$USERNAME.png
 EOF
 
-# --- KDE Plasma panels and widgets ---
+# KDE Plasma panels and widgets
 sudo -i -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
 var desktops = desktops();
 for (var i = 0; i < desktops.length; i++) {
@@ -152,8 +171,6 @@ topPanel.addWidget("org.kde.plasma.battery");
 
 lookandfeeltool --apply org.kde.breezedark.desktop
 timedatectl set-timezone Asia/Jerusalem
-
-# Hebrew keyboard
 localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
 
 # SDDM login & lock screen
@@ -162,7 +179,7 @@ sudo cp lock.jpg /usr/share/sddm/themes/breeze/
 sudo sed -i 's|^Current=.*|Current=breeze|' /etc/sddm.conf || true
 sudo sed -i 's|^#Background=.*|Background=/usr/share/sddm/themes/breeze/login.jpg|' /etc/sddm.conf || true
 
-# --- Invert touchpad scrolling ---
+# Invert touchpad scrolling
 sudo -i -u "$USERNAME" bash <<EOF
 mkdir -p ~/.config
 cat <<EOT >> ~/.config/kcminputrc
