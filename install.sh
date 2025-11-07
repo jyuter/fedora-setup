@@ -38,14 +38,21 @@ for repo in free nonfree; do
 done
 
 # --- Kernel dev and Razer ---
-dnf install -y kernel-devel
+CURRENT_KERNEL=$(uname -r)
+dnf install -y kernel-devel-"$CURRENT_KERNEL" kernel-headers-"$CURRENT_KERNEL"
 
 # Hardware Razer repo via wget
 RAZER_REPO="/etc/yum.repos.d/hardware:razer.repo"
 if [ ! -f "$RAZER_REPO" ]; then
     wget -q "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo" -O "$RAZER_REPO"
 fi
+
+# Install OpenRazer meta package (DKMS modules will build automatically)
 dnf install -y openrazer-meta
+
+# Rebuild DKMS modules to ensure they compile
+dkms autoinstall
+systemctl enable --now openrazer-daemon
 
 # --- Enable Flathub ---
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
