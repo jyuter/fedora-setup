@@ -7,9 +7,7 @@ USERHOME="/home/$USERNAME"
 echo "=== Starting Fedora KDE Setup ==="
 
 # --- Hostname ---
-if [ "$(hostname)" != "hp-fedora" ]; then
-    hostnamectl set-hostname hp-fedora
-fi
+hostnamectl set-hostname hp-fedora
 
 # --- DNF config ---
 DNF_CONF="/etc/dnf/dnf.conf"
@@ -27,26 +25,6 @@ fi
 dnf upgrade --refresh -y
 dnf install -y dnf-automatic dnf-plugins-core wget unzip
 
-# --- RPM Fusion ---
-for repo in free nonfree; do
-    if ! dnf repolist | grep -q rpmfusion-$repo; then
-        dnf install -y "https://download1.rpmfusion.org/$repo/fedora/rpmfusion-$repo-release-$(rpm -E %fedora).noarch.rpm"
-    fi
-done
-
-# --- Kernel dev and OpenRazer ---
-CURRENT_KERNEL=$(uname -r)
-dnf install -y kernel-devel-"$CURRENT_KERNEL" kernel-headers-"$CURRENT_KERNEL"
-
-RAZER_REPO="/etc/yum.repos.d/hardware:razer.repo"
-if [ ! -f "$RAZER_REPO" ]; then
-    wget -q "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo" -O "$RAZER_REPO"
-fi
-
-dnf install -y openrazer-meta
-dkms autoinstall
-systemctl enable --now openrazer-daemon
-
 # --- Enable Flathub ---
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
@@ -56,8 +34,8 @@ speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip ghostty time
 dnf install -y "${CORE_PKGS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
 
-# --- Git configuration as user ---
-sudo -i -u "$USERNAME" bash <<EOF
+# --- Git configuration as user (fixed PATH issue) ---
+sudo -i -u "$USERNAME" env PATH=$PATH bash <<'EOF'
 git config --global user.name "Josh Yuter"
 git config --global user.email "jyuter@gmail.com"
 EOF
@@ -98,7 +76,6 @@ firewall-cmd --reload
 
 # --- Containers ---
 dnf install -y podman
-
 DOCKER_REPO="/etc/yum.repos.d/docker-ce.repo"
 if [ ! -f "$DOCKER_REPO" ]; then
     wget -q https://download.docker.com/linux/fedora/docker-ce.repo -O "$DOCKER_REPO"
@@ -148,7 +125,7 @@ cat <<EOF >/var/lib/AccountsService/users/$USERNAME
 Icon=/var/lib/AccountsService/icons/$USERNAME.png
 EOF
 
-# --- KDE Plasma settings ---
+# --- KDE Plasma panels and widgets ---
 sudo -i -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
 var desktops = desktops();
 for (var i = 0; i < desktops.length; i++) {
@@ -158,6 +135,7 @@ for (var i = 0; i < desktops.length; i++) {
     d.writeConfig("Image", "file://'$USERHOME'/Pictures/setup/wallpaper.jpg");
 }
 
+// Bottom panel
 var bottomPanel = new Panel;
 bottomPanel.location = "bottom";
 bottomPanel.alignment = 0;
@@ -167,18 +145,20 @@ var taskManager = bottomPanel.addWidget("org.kde.plasma.taskmanager");
 taskManager.writeConfig("favorites", "konsole.desktop,firefox.desktop,com.ticktick.TickTick.desktop,code.desktop");
 taskManager.reloadConfig();
 
+// Top panel
 var topPanel = new Panel;
 topPanel.location = "top";
 topPanel.height = 0.04;
-topPanel.addWidget("org.kde.plasma.digitalclock");
+var clock = topPanel.addWidget("org.kde.plasma.digitalclock");
+clock.currentConfigGroup = ["Appearance"];
+clock.writeConfig("showDate", true);
 topPanel.addWidget("org.kde.plasma.battery");
 '
 
 lookandfeeltool --apply org.kde.breezedark.desktop
-
 timedatectl set-timezone Asia/Jerusalem
 
-# Hebrew keyboard
+# Hebrew keyboard with flag icon
 dnf install -y ibus ibus-hspell
 localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
 
@@ -196,5 +176,11 @@ cat <<EOT >> ~/.config/kcminputrc
 InvertScroll=true
 EOT
 EOF
+
+# --- Check if kernel upgrade requires reboot ---
+if [ -f /var/run/reboot-required ] || [ "$(needs-restarting -r 2>/dev/null)" == "1" ]; then
+    echo "Kernel or DKMS requires reboot. Rebooting now..."
+    systemctl reboot
+fi
 
 echo "✅ Fedora KDE Setup complete!"
