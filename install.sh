@@ -24,7 +24,7 @@ fi
 # --- Update system ---
 dnf upgrade --refresh -y
 dnf install -y dnf-automatic dnf-plugins-core wget unzip git gh zsh util-linux htop fastfetch neovim fzf bat cpufetch lsd \
-speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd ibus ibus-hspell
+speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd --skip-unavailable
 
 ln -s /var/lib/snapd/snap /snap || true
 
@@ -65,21 +65,21 @@ fi
 
 # --- Development tools ---
 DEV_PKGS=(dotnet-sdk-8.0 gcc elixir php-cli phpunit composer php-pdo php-pdo_mysql erlang redis rabbitmq-server nginx ruby rustup golang nodejs)
-dnf install -y "${DEV_PKGS[@]}"
+dnf install -y --skip-unavailable "${DEV_PKGS[@]}"
 systemctl enable redis nginx
 systemctl start nginx
 firewall-cmd --permanent --add-service={http,https}
 firewall-cmd --reload
 
 # --- Containers ---
-dnf install -y podman
+dnf install -y --skip-unavailable podman
 DOCKER_REPO="/etc/yum.repos.d/docker-ce.repo"
 if [ ! -f "$DOCKER_REPO" ]; then
     wget -q https://download.docker.com/linux/fedora/docker-ce.repo -O "$DOCKER_REPO"
 fi
-dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+dnf install -y --skip-unavailable docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 wget -q -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
-dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
+dnf install -y --skip-unavailable ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
 systemctl enable --now docker
 
 # --- Editors & Browsers ---
@@ -106,14 +106,14 @@ dnf install -y --skip-unavailable google-chrome
 snap install bruno || true
 snap install postman || true
 
-# --- Multimedia (without ffmpeg) ---
-dnf install -y vlc mpv intel-media-driver
-dnf group install -y Multimedia
+# --- Multimedia (ignoring ffmpeg conflicts) ---
+dnf install -y --skip-unavailable vlc mpv intel-media-driver
+dnf group install -y --skip-unavailable Multimedia
 
 # --- Flatpaks ---
 FLATPAKS=(org.zotero.Zotero com.bitwarden.desktop io.github.giantpinkrobots.flatsweep com.github.dail8859.NotepadNext com.ticktick.TickTick com.github.PintaProject.Pinta)
 for app in "${FLATPAKS[@]}"; do
-    flatpak install -y flathub "$app"
+    flatpak install -y flathub "$app" || true
 done
 
 # --- KDE Personalization ---
