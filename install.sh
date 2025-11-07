@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Fedora KDE Setup Script
-# Source: https://raw.githubusercontent.com/jyuter/fedora-setup/refs/heads/main/install.sh
-
 USERNAME="jyuter"
 USERHOME="/home/$USERNAME"
 
@@ -37,63 +34,56 @@ for repo in free nonfree; do
     fi
 done
 
-# --- Kernel dev and Razer ---
+# --- Kernel dev and OpenRazer ---
 CURRENT_KERNEL=$(uname -r)
 dnf install -y kernel-devel-"$CURRENT_KERNEL" kernel-headers-"$CURRENT_KERNEL"
 
-# Hardware Razer repo via wget
 RAZER_REPO="/etc/yum.repos.d/hardware:razer.repo"
 if [ ! -f "$RAZER_REPO" ]; then
     wget -q "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo" -O "$RAZER_REPO"
 fi
 
-# Install OpenRazer meta package (DKMS modules will build automatically)
 dnf install -y openrazer-meta
-
-# Rebuild DKMS modules to ensure they compile
 dkms autoinstall
 systemctl enable --now openrazer-daemon
 
 # --- Enable Flathub ---
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# --- Git & GitHub ---
-for pkg in git gh; do
-    dnf list installed "$pkg" &>/dev/null || dnf install -y "$pkg"
-done
-sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
-sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
-
-# --- Utilities & Shell ---
-dnf copr enable maksimib/fedora-fastfetch -y
-
-UTILS=(zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop speedtest-cli lolcat tmux \
-ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
-dnf install -y "${UTILS[@]}"
+# --- Install core packages ---
+CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop \
+speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
+dnf install -y "${CORE_PKGS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
+
+# --- Git configuration as user ---
+sudo -i -u "$USERNAME" bash <<EOF
+git config --global user.name "Josh Yuter"
+git config --global user.email "jyuter@gmail.com"
+EOF
 
 # --- Fonts ---
 FONT_DIR="/usr/local/share/fonts/nerdfonts"
 mkdir -p "$FONT_DIR"
 cd "$FONT_DIR"
+
 FONTS=(JetBrainsMono Meslo Lekton RobotoMono Mononoki)
 for font in "${FONTS[@]}"; do
-    if [ ! -f "${font}.ttf" ]; then
-        wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip"
-        unzip -o "${font}.zip"
-        rm -f "${font}.zip"
-    fi
+    [ ! -f "${font}.zip" ] && wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/${font}.zip"
+    unzip -o "${font}.zip"
+    rm -f "${font}.zip"
 done
-if [ ! -f Hack-Regular.ttf ]; then
-    wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
-    unzip -o Hack-v3.003-ttf.zip
-    rm -f Hack-v3.003-ttf.zip
-fi
+
+# Hack font
+[ ! -f Hack-v3.003-ttf.zip ] && wget -q "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+unzip -o Hack-v3.003-ttf.zip
+rm -f Hack-v3.003-ttf.zip
+
 fc-cache -v
 
 # --- Powerlevel10k ---
 if [ ! -d "$USERHOME/powerlevel10k" ]; then
-    sudo -u "$USERNAME" git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$USERHOME/powerlevel10k"
+    sudo -i -u "$USERNAME" git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$USERHOME/powerlevel10k"
     echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> "$USERHOME/.zshrc"
     chown -R "$USERNAME":"$USERNAME" "$USERHOME/powerlevel10k" "$USERHOME/.zshrc"
 fi
@@ -109,7 +99,6 @@ firewall-cmd --reload
 # --- Containers ---
 dnf install -y podman
 
-# Docker CE repo via wget
 DOCKER_REPO="/etc/yum.repos.d/docker-ce.repo"
 if [ ! -f "$DOCKER_REPO" ]; then
     wget -q https://download.docker.com/linux/fedora/docker-ce.repo -O "$DOCKER_REPO"
@@ -137,7 +126,7 @@ for app in "${FLATPAKS[@]}"; do
 done
 
 # --- KDE Personalization ---
-sudo -u "$USERNAME" mkdir -p "$USERHOME/Pictures/setup"
+sudo -i -u "$USERNAME" mkdir -p "$USERHOME/Pictures/setup"
 cd "$USERHOME/Pictures/setup"
 
 IMG_URLS=(
@@ -159,8 +148,8 @@ cat <<EOF >/var/lib/AccountsService/users/$USERNAME
 Icon=/var/lib/AccountsService/icons/$USERNAME.png
 EOF
 
-# KDE Plasma setup: panels, widgets, pinned apps
-sudo -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+# --- KDE Plasma settings ---
+sudo -i -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
 var desktops = desktops();
 for (var i = 0; i < desktops.length; i++) {
     var d = desktops[i];
@@ -169,19 +158,15 @@ for (var i = 0; i < desktops.length; i++) {
     d.writeConfig("Image", "file://'$USERHOME'/Pictures/setup/wallpaper.jpg");
 }
 
-// --- Bottom Panel ---
 var bottomPanel = new Panel;
 bottomPanel.location = "bottom";
 bottomPanel.alignment = 0;
 bottomPanel.height = 0.06;
 bottomPanel.locked = true;
-bottomPanel.addWidget("org.kde.plasma.appmenu");
 var taskManager = bottomPanel.addWidget("org.kde.plasma.taskmanager");
 taskManager.writeConfig("favorites", "konsole.desktop,firefox.desktop,com.ticktick.TickTick.desktop,code.desktop");
 taskManager.reloadConfig();
-bottomPanel.addWidget("org.kde.plasma.systemtray");
 
-// --- Top Panel ---
 var topPanel = new Panel;
 topPanel.location = "top";
 topPanel.height = 0.04;
@@ -189,14 +174,11 @@ topPanel.addWidget("org.kde.plasma.digitalclock");
 topPanel.addWidget("org.kde.plasma.battery");
 '
 
-# Breeze Dark
 lookandfeeltool --apply org.kde.breezedark.desktop
 
-# Timezone and 24h clock
 timedatectl set-timezone Asia/Jerusalem
-gsettings set org.kde.kglobalaccel.khotkeys clock24h true || true
 
-# Hebrew Keyboard
+# Hebrew keyboard
 dnf install -y ibus ibus-hspell
 localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
 
@@ -207,17 +189,12 @@ sudo sed -i 's|^Current=.*|Current=breeze|' /etc/sddm.conf || true
 sudo sed -i 's|^#Background=.*|Background=/usr/share/sddm/themes/breeze/login.jpg|' /etc/sddm.conf || true
 
 # --- Invert touchpad scrolling ---
-sudo -u "$USERNAME" bash -c 'cat <<EOF >> ~/.config/kcminputrc
+sudo -i -u "$USERNAME" bash <<EOF
+mkdir -p ~/.config
+cat <<EOT >> ~/.config/kcminputrc
 [Touchpad]
 InvertScroll=true
-EOF'
-
-# Apply immediately if in X11 session
-if command -v xinput >/dev/null 2>&1; then
-    TOUCHPAD_ID=$(xinput list | grep -i touchpad | grep -o "id=[0-9]\+" | grep -o "[0-9]\+")
-    if [ -n "$TOUCHPAD_ID" ]; then
-        xinput set-prop $TOUCHPAD_ID "libinput Natural Scrolling Enabled" 1
-    fi
-fi
+EOT
+EOF
 
 echo "✅ Fedora KDE Setup complete!"
