@@ -28,7 +28,7 @@ fi
 
 # --- Update system ---
 dnf upgrade --refresh -y
-dnf install -y dnf-automatic dnf-plugins-core
+dnf install -y dnf-automatic dnf-plugins-core wget unzip
 
 # --- RPM Fusion ---
 for repo in free nonfree; do
@@ -39,8 +39,11 @@ done
 
 # --- Kernel dev and Razer ---
 dnf install -y kernel-devel
-if ! dnf repolist | grep -q hardware:/razer; then
-    dnf config-manager --add-repo "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo"
+
+# Hardware Razer repo via wget
+RAZER_REPO="/etc/yum.repos.d/hardware:razer.repo"
+if [ ! -f "$RAZER_REPO" ]; then
+    wget -q "https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo" -O "$RAZER_REPO"
 fi
 dnf install -y openrazer-meta
 
@@ -55,7 +58,6 @@ sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
 sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
 
 # --- Utilities & Shell ---
-# Add Fastfetch via COPR instead of Neofetch
 dnf copr enable maksimib/fedora-fastfetch -y
 
 UTILS=(zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop speedtest-cli lolcat tmux \
@@ -99,7 +101,12 @@ firewall-cmd --reload
 
 # --- Containers ---
 dnf install -y podman
-dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+# Docker CE repo via wget
+DOCKER_REPO="/etc/yum.repos.d/docker-ce.repo"
+if [ ! -f "$DOCKER_REPO" ]; then
+    wget -q https://download.docker.com/linux/fedora/docker-ce.repo -O "$DOCKER_REPO"
+fi
 dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 wget -q -O docker-desktop.rpm "https://desktop.docker.com/linux/main/amd64/docker-desktop-x86_64.rpm"
 dnf install -y ./docker-desktop.rpm && rm -f ./docker-desktop.rpm
