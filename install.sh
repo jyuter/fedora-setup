@@ -50,7 +50,10 @@ sudo -u "$USERNAME" git config --global user.name "Josh Yuter"
 sudo -u "$USERNAME" git config --global user.email "jyuter@gmail.com"
 
 # --- Utilities & Shell ---
-UTILS=(zsh util-linux htop neofetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop speedtest-cli lolcat tmux \
+# Add Fastfetch via COPR instead of Neofetch
+dnf copr enable maksimib/fedora-fastfetch -y
+
+UTILS=(zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop speedtest-cli lolcat tmux \
 ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
 dnf install -y "${UTILS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
@@ -131,7 +134,7 @@ cat <<EOF >/var/lib/AccountsService/users/$USERNAME
 Icon=/var/lib/AccountsService/icons/$USERNAME.png
 EOF
 
-# KDE Plasma setup: panels, widgets, and pinned apps
+# KDE Plasma setup: panels, widgets, pinned apps
 sudo -u "$USERNAME" dbus-launch --exit-with-session qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
 var desktops = desktops();
 for (var i = 0; i < desktops.length; i++) {
@@ -177,5 +180,19 @@ sudo cp login.jpg /usr/share/sddm/themes/breeze/
 sudo cp lock.jpg /usr/share/sddm/themes/breeze/
 sudo sed -i 's|^Current=.*|Current=breeze|' /etc/sddm.conf || true
 sudo sed -i 's|^#Background=.*|Background=/usr/share/sddm/themes/breeze/login.jpg|' /etc/sddm.conf || true
+
+# --- Invert touchpad scrolling ---
+sudo -u "$USERNAME" bash -c 'cat <<EOF >> ~/.config/kcminputrc
+[Touchpad]
+InvertScroll=true
+EOF'
+
+# Apply immediately if in X11 session
+if command -v xinput >/dev/null 2>&1; then
+    TOUCHPAD_ID=$(xinput list | grep -i touchpad | grep -o "id=[0-9]\+" | grep -o "[0-9]\+")
+    if [ -n "$TOUCHPAD_ID" ]; then
+        xinput set-prop $TOUCHPAD_ID "libinput Natural Scrolling Enabled" 1
+    fi
+fi
 
 echo "✅ Fedora KDE Setup complete!"
