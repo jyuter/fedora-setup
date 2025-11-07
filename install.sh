@@ -28,13 +28,13 @@ dnf install -y dnf-automatic dnf-plugins-core wget unzip
 # --- Enable Flathub ---
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# --- Install core packages ---
-CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop \
+# --- Core utilities ---
+CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat ffmpeg cpufetch lsd \
 speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd)
 dnf install -y "${CORE_PKGS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
 
-# --- Git configuration as user ---
+# --- Git configuration ---
 sudo -i -u "$USERNAME" env PATH=$PATH bash <<'EOF'
 git config --global user.name "Josh Yuter"
 git config --global user.email "jyuter@gmail.com"
@@ -89,10 +89,17 @@ systemctl enable --now docker
 dnf install -y code firefox google-chrome-stable brave-browser
 snap install bruno postman
 
-# --- Multimedia (ffmpeg swap after other multimedia installs) ---
+# --- Multimedia / ffmpeg ---
 dnf install -y vlc mpv intel-media-driver
 dnf group install -y Multimedia
-dnf swap ffmpeg-free ffmpeg --allowerasing -y
+
+# Remove conflicting ffmpeg-free first
+dnf remove -y ffmpeg-free --skip-broken || true
+
+# Install RPMFusion ffmpeg
+dnf install -y ffmpeg --allowerasing
+
+# Update multimedia packages
 dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
 dnf update @sound-and-video -y
 
@@ -158,7 +165,7 @@ topPanel.addWidget("org.kde.plasma.battery");
 lookandfeeltool --apply org.kde.breezedark.desktop
 timedatectl set-timezone Asia/Jerusalem
 
-# Hebrew keyboard with flag icon
+# Hebrew keyboard
 dnf install -y ibus ibus-hspell
 localectl set-x11-keymap us,il pc105 "" grp:alt_shift_toggle
 
