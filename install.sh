@@ -30,11 +30,11 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 # --- Install core packages ---
 CORE_PKGS=(git gh zsh util-linux htop fastfetch neovim fzf bat eza ffmpeg cpufetch lsd bpytop \
-speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip ghostty timeshift dnfdragora snapd)
+speedtest-cli lolcat tmux ripgrep zoxide entr mc stow kvantum ksnip timeshift dnfdragora snapd)
 dnf install -y "${CORE_PKGS[@]}"
 ln -s /var/lib/snapd/snap /snap || true
 
-# --- Git configuration as user (fixed PATH issue) ---
+# --- Git configuration as user ---
 sudo -i -u "$USERNAME" env PATH=$PATH bash <<'EOF'
 git config --global user.name "Josh Yuter"
 git config --global user.email "jyuter@gmail.com"
@@ -89,12 +89,12 @@ systemctl enable --now docker
 dnf install -y code firefox google-chrome-stable brave-browser
 snap install bruno postman
 
-# --- Media ---
+# --- Multimedia (ffmpeg swap after other multimedia installs) ---
+dnf install -y vlc mpv intel-media-driver
+dnf group install -y Multimedia
 dnf swap ffmpeg-free ffmpeg --allowerasing -y
 dnf update @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin -y
 dnf update @sound-and-video -y
-dnf install -y intel-media-driver vlc mpv
-dnf group install -y Multimedia
 
 # --- Flatpaks ---
 FLATPAKS=(org.zotero.Zotero com.bitwarden.desktop io.github.giantpinkrobots.flatsweep com.github.dail8859.NotepadNext com.ticktick.TickTick com.github.PintaProject.Pinta)
@@ -176,11 +176,5 @@ cat <<EOT >> ~/.config/kcminputrc
 InvertScroll=true
 EOT
 EOF
-
-# --- Check if kernel upgrade requires reboot ---
-if [ -f /var/run/reboot-required ] || [ "$(needs-restarting -r 2>/dev/null)" == "1" ]; then
-    echo "Kernel or DKMS requires reboot. Rebooting now..."
-    systemctl reboot
-fi
 
 echo "✅ Fedora KDE Setup complete!"
