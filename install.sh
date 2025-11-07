@@ -96,17 +96,28 @@ EOF
 dnf check-update
 dnf install -y --skip-unavailable code
 
-# Firefox & Google Chrome
+# Firefox
 dnf install -y --skip-unavailable firefox
-dnf install -y --skip-unavailable fedora-workstation-repositories
-dnf config-manager --set-enabled google-chrome
-dnf install -y --skip-unavailable google-chrome
+
+# Google Chrome
+CHROME_REPO="/etc/yum.repos.d/google-chrome.repo"
+if [ ! -f "$CHROME_REPO" ]; then
+    cat <<EOF | sudo tee "$CHROME_REPO"
+[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+EOF
+fi
+dnf install -y --skip-unavailable google-chrome-stable
 
 # Snap apps
 snap install bruno || true
 snap install postman || true
 
-# --- Multimedia (ignoring ffmpeg conflicts) ---
+# --- Multimedia (ignore ffmpeg conflicts) ---
 dnf install -y --skip-unavailable vlc mpv intel-media-driver
 dnf group install -y --skip-unavailable Multimedia
 
