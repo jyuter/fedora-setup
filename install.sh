@@ -1,88 +1,85 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-echo ">>> Updating system..."
-sudo dnf upgrade -y
+# --- Simple progress function ---
+progress() {
+  echo
+  echo "=================================================================="
+  echo ">>> $1"
+  echo "=================================================================="
+}
 
-echo ">>> Enabling additional repositories..."
-sudo dnf install -y dnf-plugins-core
-sudo dnf config-manager enable fedora-cisco-openh264 || true
-sudo dnf copr enable atim/eza -y || true
+# --- System update ---
+progress "Updating system..."
+sudo dnf -y update --refresh
 
-# Add Microsoft repo for VSCode
-if [ ! -f /etc/yum.repos.d/vscode.repo ]; then
-  sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-  sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-fi
+# --- Base utilities ---
+progress "Installing base utilities..."
+sudo dnf -y install \
+  git curl wget fastfetch htop tmux neovim unzip \
+  timeshift dnfdragora snapd \
+  --skip-unavailable
 
-# Add Google Chrome repo
-if [ ! -f /etc/yum.repos.d/google-chrome.repo ]; then
-  sudo sh -c 'echo -e "[google-chrome]\nname=Google Chrome\nbaseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.google.com/linux/linux_signing_key.pub" > /etc/yum.repos.d/google-chrome.repo'
-fi
+# --- Enable snap + flatpak ---
+progress "Configuring snap and flatpak..."
+sudo ln -sf /var/lib/snapd/snap /snap || true
+sudo dnf -y install flatpak --skip-unavailable
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-echo ">>> Installing base utilities..."
-sudo dnf install -y git curl wget fastfetch htop tmux vim \
-  neovim python3-pip unzip eza btop timeshift dnfdragora snapd || true
+# --- GUI Apps ---
+progress "Installing desktop applications (Flatpak)..."
+flatpak install -y flathub com.ticktick.TickTick || true
+flatpak install -y flathub org.gimp.GIMP || true
+flatpak install -y flathub org.mozilla.firefox || true
+flatpak install -y flathub org.videolan.VLC || true
+flatpak install -y flathub org.libreoffice.LibreOffice || true
+flatpak install -y flathub com.spotify.Client || true
+flatpak install -y flathub com.discordapp.Discord || true
 
-echo ">>> Fixing snap symlink..."
-if [ ! -L /snap ]; then
-  sudo ln -s /var/lib/snapd/snap /snap
-else
-  echo "/snap already exists, skipping link creation."
-fi
-
-echo ">>> Setting up Flatpak..."
-sudo dnf install -y flatpak
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
-echo ">>> Installing desktop apps..."
-sudo dnf install -y firefox code google-chrome-stable || true
-flatpak install -y flathub com.ticktick.TickTick
-
-echo ">>> Configuring KDE appearance and widgets..."
-kwriteconfig5 --file kdeglobals --group "General" --key "ColorScheme" "Breeze Dark"
-kwriteconfig5 --file kdeglobals --group "Icons" --key "Theme" "breeze-dark"
-
-echo ">>> Locking bottom panel and adding widgets..."
-mkdir -p ~/.config
-cat <<EOF > ~/.config/plasma-org.kde.plasma.desktop-appletsrc
-[Containments][1][General]
-alignment=bottom
-showToolbox=false
-formfactor=2
-immutability=1
-plugin=org.kde.panel
-location=4
-height=2
-locked=true
-
-[Containments][1][Applets][1]
-plugin=org.kde.plasma.digitalclock
-[Containments][1][Applets][1][Configuration][Appearance]
-showDate=true
-dateFormat=custom
-customDateFormat=ddd dd/MM/yyyy
-use24hFormat=2
-
-[Containments][1][Applets][2]
-plugin=org.kde.plasma.battery
+# --- VSCode (fixed repo for Fedora) ---
+progress "Installing Visual Studio Code..."
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
+[code]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 
-echo ">>> Setting locale, keyboard, and region..."
-sudo localectl set-locale LANG=en_US.UTF-8
-sudo localectl set-x11-keymap us,il
-sudo localectl set-keymap us,il
-gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'il')]"
-sudo timedatectl set-timezone Asia/Jerusalem
-kwriteconfig5 --file kdeglobals --group "Locale" --key "TimeFormat" "HH:mm"
+if ! sudo dnf -y install code --skip-unavailable; then
+  echo "⚠️ VSCode repo temporarily unavailable. Skipping..."
+fi
 
-echo ">>> Inverting touchpad scroll direction..."
-kwriteconfig5 --file kcm_touchpadrc --group "Touchpad" --key "NaturalScroll" "true"
+# --- Modern CLI tools ---
+progress "Installing modern CLI tools..."
+sudo dnf -y install eza btop bat fd-find ripgrep fzf zoxide \
+  --skip-unavailable || {
+    echo "⚠️ Some modern CLI tools unavailable. Skipping..."
+  }
 
-echo ">>> Pinning taskbar apps..."
-for app in konsole firefox code ticktick; do
-  kstart5 --application "$app" || true
-done
+# --- Developer tools ---
+progress "Installing developer tools..."
+sudo dnf -y groupinstall "Development Tools" --skip-unavailable
+sudo dnf -y install nodejs python3-pip dotnet-sdk \
+  --skip-unavailable || true
 
-echo ">>> Setup complete!"
-echo "Please log out and back in for all KDE settings to take effect."
+# --- Timeshift auto snapshots ---
+progress "Enabling Timeshift auto snapshots..."
+sudo systemctl enable timeshift.timer || true
+
+# --- Final cleanup ---
+progress "Cleaning up..."
+sudo dnf -y autoremove
+sudo dnf clean all
+
+# --- Done ---
+progress "✅ Fedora setup complete!"
+echo "✨ System is now ready!"
+echo "   • Reboot recommended."
+echo "   • Launch apps with:"
+echo "       TickTick → flatpak run com.ticktick.TickTick"
+echo "       VSCode   → code"
+echo "       GIMP     → flatpak run org.gimp.GIMP"
+echo
