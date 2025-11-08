@@ -1,85 +1,86 @@
 #!/usr/bin/env bash
 set -e
 
-# --- Simple progress function ---
-progress() {
-  echo
-  echo "=================================================================="
-  echo ">>> $1"
-  echo "=================================================================="
-}
+echo ">>> Fedora setup script starting..."
+sudo -v
 
-# --- System update ---
-progress "Updating system..."
-sudo dnf -y update --refresh
+### --- Update system ---
+echo ">>> Updating system packages..."
+sudo dnf upgrade --refresh -y
 
-# --- Base utilities ---
-progress "Installing base utilities..."
-sudo dnf -y install \
-  git curl wget fastfetch htop tmux neovim unzip \
-  timeshift dnfdragora snapd \
-  --skip-unavailable
+### --- Enable RPM Fusion (Free + Non-Free) ---
+echo ">>> Enabling RPM Fusion..."
+sudo dnf install -y \
+  https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+  https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-# --- Enable snap + flatpak ---
-progress "Configuring snap and flatpak..."
+### --- Enable Flathub ---
+echo ">>> Adding Flathub repository..."
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+### --- Base tools ---
+echo ">>> Installing essential packages..."
+sudo dnf install -y \
+  git curl wget unzip neovim tmux htop fastfetch timeshift dnfdragora snapd \
+  ffmpeg-free --skip-broken --allowerasing || true
+
+# Handle symbolic link for snap (ignore if exists)
 sudo ln -sf /var/lib/snapd/snap /snap || true
-sudo dnf -y install flatpak --skip-unavailable
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# --- GUI Apps ---
-progress "Installing desktop applications (Flatpak)..."
-flatpak install -y flathub com.ticktick.TickTick || true
-flatpak install -y flathub org.gimp.GIMP || true
-flatpak install -y flathub org.mozilla.firefox || true
-flatpak install -y flathub org.videolan.VLC || true
-flatpak install -y flathub org.libreoffice.LibreOffice || true
-flatpak install -y flathub com.spotify.Client || true
-flatpak install -y flathub com.discordapp.Discord || true
+### --- Fix for missing utilities ---
+# bpytop renamed → btop; eza may not exist, fallback to exa
+sudo dnf install -y btop exa || true
 
-# --- VSCode (fixed repo for Fedora) ---
-progress "Installing Visual Studio Code..."
+### --- VSCode (Microsoft repo fix) ---
+echo ">>> Setting up Visual Studio Code repository..."
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo tee /etc/yum.repos.d/vscode.repo > /dev/null << 'EOF'
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\nautorefresh=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | \
+  sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
+sudo dnf check-update || true
+sudo dnf install -y code || true
+
+### --- Browsers ---
+echo ">>> Installing Google Chrome..."
+sudo dnf install -y fedora-workstation-repositories
+sudo dnf config-manager --set-enabled google-chrome || true
+sudo dnf install -y google-chrome-stable --skip-unavailable || true
+
+### --- Flatpak apps ---
+echo ">>> Installing Flatpak apps..."
+flatpak install -y flathub com.ticktick.TickTick
+flatpak install -y flathub org.mozilla.firefox
+flatpak install -y flathub org.gimp.GIMP || true
+
+### --- Create desktop shortcuts for Flatpak apps ---
+echo ">>> Ensuring Flatpak apps appear in the application menu..."
+sudo update-desktop-database /usr/share/applications || true
+
+### --- Invert touchpad scrolling ---
+echo ">>> Inverting touchpad scrolling..."
+TOUCHPAD_CONF="/etc/X11/xorg.conf.d/40-libinput.conf"
+sudo mkdir -p /etc/X11/xorg.conf.d
+sudo tee $TOUCHPAD_CONF > /dev/null <<'EOF'
+Section "InputClass"
+    Identifier "touchpad catchall"
+    MatchIsTouchpad "on"
+    Driver "libinput"
+    Option "NaturalScrolling" "true"
+EndSection
 EOF
 
-if ! sudo dnf -y install code --skip-unavailable; then
-  echo "⚠️ VSCode repo temporarily unavailable. Skipping..."
-fi
+### --- Pin apps to taskbar (GNOME) ---
+echo ">>> Pinning favorite apps to GNOME dock..."
+gsettings set org.gnome.shell favorite-apps "[
+  'org.gnome.Terminal.desktop',
+  'firefox.desktop',
+  'com.ticktick.TickTick.desktop',
+  'code.desktop'
+]"
 
-# --- Modern CLI tools ---
-progress "Installing modern CLI tools..."
-sudo dnf -y install eza btop bat fd-find ripgrep fzf zoxide \
-  --skip-unavailable || {
-    echo "⚠️ Some modern CLI tools unavailable. Skipping..."
-  }
-
-# --- Developer tools ---
-progress "Installing developer tools..."
-sudo dnf -y groupinstall "Development Tools" --skip-unavailable
-sudo dnf -y install nodejs python3-pip dotnet-sdk \
-  --skip-unavailable || true
-
-# --- Timeshift auto snapshots ---
-progress "Enabling Timeshift auto snapshots..."
-sudo systemctl enable timeshift.timer || true
-
-# --- Final cleanup ---
-progress "Cleaning up..."
-sudo dnf -y autoremove
+### --- Cleanup ---
+echo ">>> Cleaning up unused packages..."
+sudo dnf autoremove -y
 sudo dnf clean all
 
-# --- Done ---
-progress "✅ Fedora setup complete!"
-echo "✨ System is now ready!"
-echo "   • Reboot recommended."
-echo "   • Launch apps with:"
-echo "       TickTick → flatpak run com.ticktick.TickTick"
-echo "       VSCode   → code"
-echo "       GIMP     → flatpak run org.gimp.GIMP"
-echo
+### --- Final message ---
+echo ">>> ✅ Setup complete! Please reboot for all changes to take effect."
