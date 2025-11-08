@@ -4,16 +4,25 @@ set -e
 echo ">>> Updating system..."
 sudo dnf upgrade -y
 
-echo ">>> Installing essential repositories..."
+echo ">>> Enabling additional repositories..."
 sudo dnf install -y dnf-plugins-core
 sudo dnf config-manager enable fedora-cisco-openh264 || true
-sudo dnf install -y \
-  https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
-  https://packages.microsoft.com/yumrepos/vscode/code-latest-1.94.2-1700707853.el7.x86_64.rpm || true
+sudo dnf copr enable atim/eza -y || true
+
+# Add Microsoft repo for VSCode
+if [ ! -f /etc/yum.repos.d/vscode.repo ]; then
+  sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+  sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+fi
+
+# Add Google Chrome repo
+if [ ! -f /etc/yum.repos.d/google-chrome.repo ]; then
+  sudo sh -c 'echo -e "[google-chrome]\nname=Google Chrome\nbaseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.google.com/linux/linux_signing_key.pub" > /etc/yum.repos.d/google-chrome.repo'
+fi
 
 echo ">>> Installing base utilities..."
 sudo dnf install -y git curl wget fastfetch htop tmux vim \
-  gnome-tweaks neovim python3-pip unzip eza bpytop timeshift dnfdragora snapd
+  neovim python3-pip unzip eza btop timeshift dnfdragora snapd || true
 
 echo ">>> Fixing snap symlink..."
 if [ ! -L /snap ]; then
@@ -22,19 +31,20 @@ else
   echo "/snap already exists, skipping link creation."
 fi
 
-echo ">>> Setting up Flatpak and Snap..."
+echo ">>> Setting up Flatpak..."
 sudo dnf install -y flatpak
-sudo systemctl enable --now snapd.socket || true
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 echo ">>> Installing desktop apps..."
 sudo dnf install -y firefox code google-chrome-stable || true
-sudo snap install ticktick || true
+flatpak install -y flathub com.ticktick.TickTick
 
 echo ">>> Configuring KDE appearance and widgets..."
 kwriteconfig5 --file kdeglobals --group "General" --key "ColorScheme" "Breeze Dark"
 kwriteconfig5 --file kdeglobals --group "Icons" --key "Theme" "breeze-dark"
 
 echo ">>> Locking bottom panel and adding widgets..."
+mkdir -p ~/.config
 cat <<EOF > ~/.config/plasma-org.kde.plasma.desktop-appletsrc
 [Containments][1][General]
 alignment=bottom
@@ -58,13 +68,11 @@ use24hFormat=2
 plugin=org.kde.plasma.battery
 EOF
 
-echo ">>> Setting locale and keyboard..."
+echo ">>> Setting locale, keyboard, and region..."
 sudo localectl set-locale LANG=en_US.UTF-8
 sudo localectl set-x11-keymap us,il
 sudo localectl set-keymap us,il
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'il')]"
-
-echo ">>> Setting timezone and time format..."
 sudo timedatectl set-timezone Asia/Jerusalem
 kwriteconfig5 --file kdeglobals --group "Locale" --key "TimeFormat" "HH:mm"
 
@@ -76,4 +84,5 @@ for app in konsole firefox code ticktick; do
   kstart5 --application "$app" || true
 done
 
-echo ">>> Done! Please log out and back in for all KDE settings to apply."
+echo ">>> Setup complete!"
+echo "Please log out and back in for all KDE settings to take effect."
