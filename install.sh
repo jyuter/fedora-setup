@@ -28,7 +28,6 @@ sudo dnf install -y \
 sudo ln -sf /var/lib/snapd/snap /snap || true
 
 ### --- Fix for missing utilities ---
-# bpytop renamed → btop; eza may not exist, fallback to exa
 sudo dnf install -y btop exa || true
 
 ### --- VSCode (Microsoft repo fix) ---
@@ -46,13 +45,12 @@ sudo dnf config-manager --set-enabled google-chrome || true
 sudo dnf install -y google-chrome-stable --skip-unavailable || true
 
 ### --- Flatpak apps ---
-echo ">>> Installing Flatpak apps..."
-flatpak install -y flathub com.ticktick.TickTick
-flatpak install -y flathub org.mozilla.firefox
-flatpak install -y flathub org.gimp.GIMP || true
+echo ">>> Installing Flatpak apps (quiet mode)..."
+flatpak install -y --noninteractive flathub com.ticktick.TickTick || true
+flatpak install -y --noninteractive flathub org.mozilla.firefox || true
+flatpak install -y --noninteractive flathub org.gimp.GIMP || true
 
-### --- Create desktop shortcuts for Flatpak apps ---
-echo ">>> Ensuring Flatpak apps appear in the application menu..."
+### --- Ensure Flatpak apps appear in menus ---
 sudo update-desktop-database /usr/share/applications || true
 
 ### --- Invert touchpad scrolling ---
@@ -83,4 +81,5 @@ sudo dnf autoremove -y
 sudo dnf clean all
 
 ### --- Final message ---
-echo ">>> ✅ Setup complete! Please reboot for all changes to take effect."
+echo ">>> ✅ Setup complete!"
+echo "You can reboot now for all settings to take effect."
